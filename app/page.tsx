@@ -531,15 +531,15 @@ export default function HomePage() {
                   <div className="space-y-3 mb-6 p-4 rounded-lg bg-slate-700/50 border border-slate-600">
                     <div className="flex items-start gap-3">
                       <div className="w-5 h-5 text-[#23CCF6] flex-shrink-0 mt-0.5">✓</div>
-                      <span className="text-gray-100 text-sm font-semibold">Tudo do plano básico +</span>
+                      <span className="text-gray-100 text-sm font-semibold text-left">Tudo do plano básico +</span>
                     </div>
                     <div className="flex items-start gap-3">
                       <div className="w-5 h-5 text-[#23CCF6] flex-shrink-0 mt-0.5">✓</div>
-                      <span className="text-gray-100 text-sm">Protocolo completo avançado</span>
+                      <span className="text-gray-100 text-sm text-left">Protocolo completo avançado</span>
                     </div>
                     <div className="flex items-start gap-3">
                       <div className="w-5 h-5 text-[#23CCF6] flex-shrink-0 mt-0.5">✓</div>
-                      <span className="text-gray-100 text-sm">Técnicas de engrossamento</span>
+                      <span className="text-gray-100 text-sm text-left">Técnicas de engrossamento</span>
                     </div>
                     <div className="flex items-start gap-3">
                       <div className="w-5 h-5 text-[#23CCF6] flex-shrink-0 mt-0.5">✓</div>
