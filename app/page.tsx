@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { CheckCircle, ChevronDown, ChevronUp, Shield, Zap, Users } from 'lucide-react'
+import { CheckCircle, ChevronDown, ChevronUp, Shield, Zap, Users } from "lucide-react"
 
 export default function HomePage() {
   const [currentDate, setCurrentDate] = useState("")
@@ -23,9 +23,9 @@ export default function HomePage() {
 
   useEffect(() => {
     if (!showUpsellPopup) return
-    
+
     const timer = setInterval(() => {
-      setTimeLeft(prev => {
+      setTimeLeft((prev) => {
         if (prev <= 1) {
           setShowUpsellPopup(false)
           return 180
@@ -62,77 +62,70 @@ export default function HomePage() {
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
     const secs = seconds % 60
-    return `${mins}:${secs.toString().padStart(2, '0')}`
+    return `${mins}:${secs.toString().padStart(2, "0")}`
   }
 
   return (
     <div className="min-h-screen bg-white">
-      
-
-      <section className="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 text-white py-12 lg:py-16">
+      {/* Hero Section - Traduzido para português */}
+      <section className="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 text-white py-16 lg:py-20">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
             {/* Left Content */}
-            <div className="animate-fade-in">
-              <div className="mb-8">
-                
-              </div>
-
-              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
-                Saiba como homens estão obtendo um <span className="text-cyan-400">PÊNIS MAIOR</span> e mais grosso de
-                forma 100% natural e segura.
+            <div className="space-y-6">
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight text-center">
+                Descubra como os homens estão conseguindo um <span className="text-cyan-400">PÊNIS MAIOR</span> e mais
+                grosso de forma 100% natural e segura.
               </h1>
 
-              <p className="text-base md:text-lg text-gray-300 mb-6">
-                Resultados a partir da segunda semana de prática! 100% Garantido
+              <p className="md:text-xl text-gray-300 text-center lg:text-left text-base">
+                Resultados visíveis a partir da segunda semana de prática 100% natural, seguro e comprovado.
               </p>
-
-              <button
-                onClick={scrollToOffer}
-                className="bg-gradient-to-r from-cyan-400 to-cyan-500 hover:from-cyan-500 hover:to-cyan-600 text-blue-900 font-bold py-3 md:py-4 px-6 md:px-8 rounded-full text-base md:text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 w-full md:w-auto"
-              >
-                DESCUBRA A VERDADE AGORA
-              </button>
             </div>
 
             {/* Right Video */}
-            <div className="animate-slide-up">
-              <p className="text-center text-gray-300 mb-4 font-medium text-sm md:text-base">
-                Assista o vídeo e confira ↓
-              </p>
-              <div className="relative">
+            <div className="space-y-6">
+              <p className="text-center text-gray-300 font-medium">Assista ao vídeo agora — você vai entender tudo ↓</p>
+              <div className="relative rounded-xl overflow-hidden shadow-2xl border-4 border-cyan-400">
                 <iframe
                   src="https://player.vimeo.com/video/882563924?color&autopause=0&loop=0&muted=0&title=0&portrait=0&byline=0"
                   allowFullScreen
                   frameBorder="0"
                   width="100%"
-                  height="400"
-                  style={{ maxWidth: "100%", height: "auto", aspectRatio: "16/9" }}
-                  className="rounded-xl shadow-2xl border-4 border-cyan-400"
+                  style={{ aspectRatio: "16/9" }}
+                  className="rounded-xl"
+                  allow="autoplay; fullscreen"
                 />
-                <div className="absolute inset-0 rounded-xl border-4 border-cyan-400 pointer-events-none" />
               </div>
+              <button
+                onClick={scrollToOffer}
+                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 
+             text-white font-bold py-4 px-8 rounded-xl text-lg shadow-lg 
+             active:scale-95 transition-all duration-200"
+              >
+                QUERO RESULTADOS AGORA
+              </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Trust Marks */}
-      <section className="bg-blue-950 py-6 border-b border-blue-800">
+      {/* Trust Marks Section - Traduzido para português */}
+      <section className="py-8 bg-gradient-to-br from-gray-900 via-slate-800 to-gray-900">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {[
-              { icon: Shield, text: "30 dias de garantia!" },
-              { icon: Users, text: "Mais 80 mil clientes" },
-              { icon: Zap, text: "Resultados rápidos" },
+              { icon: Shield, text: "Garantia total de", boldPart: "30 dias" },
+              { icon: Users, text: "Mais de", boldPart: "80 mil homens" },
+              { icon: Zap, text: "Resultados", boldPart: "rápidos" },
             ].map((mark, index) => {
               const Icon = mark.icon
               return (
                 <div key={index} className="flex items-center justify-center space-x-3">
-                  <div className="text-cyan-400">
-                    <Icon className="w-6 h-6" />
-                  </div>
-                  <span className="text-white font-bold text-sm md:text-base">{mark.text}</span>
+                  <Icon className="w-6 h-6 text-cyan-400 flex-shrink-0" />
+                  <p className="text-base text-gray-200">
+                    {mark.text} <strong>{mark.boldPart}</strong>
+                  </p>
                 </div>
               )
             })}
@@ -140,98 +133,57 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Introduction */}
-      <section className="py-8 bg-white">
+      {/* Natural & Safe - Traduzido para português */}
+      <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
-              Com o Método Dotado Máximo você obterá um pênis <span className="text-blue-600">maior e mais grosso</span>
-            </h2>
-            <p className="text-base md:text-xl text-gray-700 leading-relaxed">
-              Isso tudo de forma <span className="font-bold">100% natural e segura</span>, sem cirurgias, aparelho de
-              sucção ou remédios. Apenas com técnicas e exercícios peniano.
+            <p className="text-xl md:text-2xl text-gray-700 leading-relaxed">
+              100% natural, seguro e comprovado. Sem cirurgias, sem aparelhos e sem medicamentos. Apenas técnicas reais
+              que funcionam.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Benefits Grid */}
-      <section className="py-8 bg-gradient-to-br from-blue-50 to-cyan-50">
+      {/* Benefits Grid - Traduzido para português */}
+      <section className="py-16 bg-gradient-to-br from-blue-50 to-cyan-50">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
                 {
-                  title: "Apenas 10 minutos ao dia",
-                  description: "Leva apenas 10 minutos de treino diário",
+                  title: "Controle total da ejaculação",
+                  description: "Adeus à ejaculação precoce: controle seu tempo e sua intensidade.",
                   image:
                     "https://dotadmaximo.website/035c19e870ba46769eadc05f4ff9218c/images/icone-relogio-de-fogo-300x300.png",
                 },
                 {
-                  title: "Ganhe até 6CM e deixe mais grosso",
-                  description: "Nosso método irá aumentar e engrossar seu pênis",
-                  image:
-                    "https://dotadmaximo.website/035c19e870ba46769eadc05f4ff9218c/images/icone-pau-grande-300x300.png",
-                },
-                {
-                  title: "Nenhum aparelho necessário",
-                  description: "Tudo que você irá fazer é praticar os exercícios com suas mãos",
-                  image: "https://dotadmaximo.website/035c19e870ba46769eadc05f4ff9218c/images/icone-bomba-300x300.png",
-                },
-              ].map((benefit, index) => (
-                <div
-                  key={index}
-                  className="bg-white p-6 md:p-8 rounded-2xl shadow-lg text-center animate-fade-in border-t-4 border-blue-400"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <div className="mb-6 flex justify-center">
-                    <img
-                      src={benefit.image || "/placeholder.svg"}
-                      alt={benefit.title}
-                      className="w-16 md:w-20 h-16 md:h-20 object-contain"
-                    />
-                  </div>
-                  <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3">{benefit.title}</h3>
-                  <p className="text-sm md:text-base text-gray-600 leading-relaxed">{benefit.description}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-              {[
-                {
-                  title: "Total controle da ejaculação",
-                  description: "De fim a ejaculação precoce e aguente o tempo que desejar",
-                  image:
-                    "https://dotadmaximo.website/035c19e870ba46769eadc05f4ff9218c/images/icone-relogio-de-fogo-300x300.png",
-                },
-                {
-                  title: "Ereções firmes e rígidas",
+                  title: "Ereções firmes e duradouras",
                   description:
-                    "Ereções firmes como rocha por muito tempo através de um músculo pélvico forte e desenvolvido",
+                    "Ereções mais rígidas e duradouras graças a um trabalho muscular específico e comprovado.",
                   image:
                     "https://dotadmaximo.website/035c19e870ba46769eadc05f4ff9218c/images/icone-homem-forte-300x300.png",
                 },
                 {
-                  title: "Resultados Rápidos",
-                  description: "Primeiros resultados já com 2 semanas de prática",
+                  title: "Resultados rápidos",
+                  description:
+                    "Resultados visíveis a partir da segunda semana de prática com rotinas diárias de 10 minutos.",
                   image: "https://dotadmaximo.website/035c19e870ba46769eadc05f4ff9218c/images/icone-bomba-300x300.png",
                 },
               ].map((benefit, index) => (
                 <div
-                  key={index + 3}
-                  className="bg-white p-6 md:p-8 rounded-2xl shadow-lg text-center animate-fade-in border-t-4 border-cyan-400"
-                  style={{ animationDelay: `${(index + 3) * 0.1}s` }}
+                  key={index}
+                  className="bg-white p-8 rounded-2xl shadow-lg text-center border-t-4 border-cyan-400 hover:shadow-xl transition-shadow duration-300"
                 >
                   <div className="mb-6 flex justify-center">
                     <img
-                      src={benefit.image || "/placeholder.svg"}
+                      src={benefit.image || "https://i.imgur.com/ZWCii9z.png"}
                       alt={benefit.title}
-                      className="w-16 md:w-20 h-16 md:h-20 object-contain"
+                      className="w-20 h-20 object-contain"
                     />
                   </div>
-                  <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3">{benefit.title}</h3>
-                  <p className="text-sm md:text-base text-gray-600 leading-relaxed">{benefit.description}</p>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">{benefit.title}</h3>
+                  <p className="text-base text-gray-600 leading-relaxed">{benefit.description}</p>
                 </div>
               ))}
             </div>
@@ -239,50 +191,34 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Benefits of Dotado Maximo */}
-      <section className="py-8 bg-white">
+      {/* What You Get - Traduzido para português */}
+      <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-4">
-              Benefícios do Dotado Máximo
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-6">
+              O que você vai conquistar com o método
             </h2>
-            <p className="text-lg md:text-xl text-center text-gray-600 mb-8">
-              Com o método Dotado Máximo você obterá <span className="text-blue-600 font-bold">vários benefícios</span>{" "}
-              em um único lugar!
-            </p>
-            <p className="text-base md:text-lg text-center text-gray-700 mb-8 leading-relaxed">
-              Ao final do treinamento obterá um pênis maior e mais grosso, mais controle da ejaculação, maior qualidade
-              das ereções, recuperação pós sexo muito mais rápida e um material exclusivo para ser melhor na cama com
-              suas parceiras!
-            </p>
-            <p className="text-base md:text-lg text-center text-gray-600 mb-12">
-              Isso tudo por um preço muito especial, podendo colocar em prática{" "}
-              <span className="text-blue-600 font-bold">AGORA mesmo!</span>
+            <p className="text-xl text-center text-gray-600 mb-4">
+              Um único método. Vários resultados. Tudo em um só lugar.
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-5xl mx-auto">
               {[
                 "Pênis maior e mais grosso",
-                "Veias mais aparentes",
-                "Ereções mais rígidas",
-                "Ajuda a endireitar a curvatura",
-                "Mais controle da ejaculação",
-                "Músculo PC forte e desenvolvido",
-                "Método cientificamente comprovado",
-                "Ganhos rápidos e permanentes",
-                "100% seguro, natural e garantido",
-                "Garante mais prazer para as suas parceiras",
-                "Mais confiança, controle e prazer sexual",
-                "30 dias de garantia",
-                "Provado por mais de 80.000 homens",
+                "Ereções muito mais rígidas",
+                "Controle total da ejaculação",
+                "Resultados progressivos a partir da semana 2",
+                "Método 100% natural e seguro",
+                "Mais confiança, controle e prazer",
+                "Acesso móvel e fácil de seguir",
+                "Comprovado por mais de 80.000 homens",
               ].map((benefit, index) => (
                 <div
                   key={index}
-                  className="flex items-start md:items-center space-x-3 p-3 md:p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl animate-fade-in border-l-4 border-blue-600"
-                  style={{ animationDelay: `${index * 0.05}s` }}
+                  className="flex items-center space-x-3 p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border-l-4 border-blue-600 hover:shadow-md transition-shadow duration-300"
                 >
-                  <CheckCircle className="w-5 md:w-6 h-5 md:h-6 text-blue-600 flex-shrink-0 mt-0.5 md:mt-0" />
-                  <p className="text-sm md:text-base text-gray-700 font-medium">{benefit}</p>
+                  <CheckCircle className="w-6 h-6 text-blue-600 flex-shrink-0" />
+                  <p className="text-base text-gray-700 font-medium">{benefit}</p>
                 </div>
               ))}
             </div>
@@ -290,45 +226,41 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Mobile Access Section */}
-      <section className="py-8 bg-gradient-to-br from-blue-50 to-cyan-50">
+      {/* Mobile Access - Traduzido para português */}
+      <section className="py-16 bg-gradient-to-br from-blue-50 to-cyan-50">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-center">
-              <div className="animate-fade-in">
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
-                  Acesse tudo pelo seu celular
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+              <div className="space-y-6">
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+                  Acesse o método completo pelo seu celular
                 </h2>
-                <div className="space-y-3 md:space-y-4">
+                <div className="space-y-4">
                   {[
-                    "Acesso a videos profissionais de todo passo a passo",
-                    "Acesso ao manual Dotado Máximo",
-                    "Acesso a tabela de resultados",
-                    "Acesso a tabela de rotina",
-                    "Suporte via Email, WhatsApp e ligação",
-                    "Acesso com login e senha exclusivo",
-                    "E muito mais...",
+                    "Vídeos passo a passo e rotinas curtas",
+                    "Manual completo e tabelas de progresso",
+                    "Rotina diária de crescimento",
+                    "Suporte por WhatsApp e email",
+                    "Acesso com login exclusivo",
                   ].map((item, index) => (
                     <div key={index} className="flex items-start space-x-3">
-                      <CheckCircle className="w-5 md:w-6 h-5 md:h-6 text-blue-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm md:text-base text-gray-700 font-medium">{item}</p>
+                      <CheckCircle className="w-6 h-6 text-blue-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-base text-gray-700 font-medium">{item}</p>
                     </div>
                   ))}
                 </div>
-                <div className="mt-6">
-                  <button
-                    onClick={scrollToOffer}
-                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-3 md:py-4 px-6 md:px-8 rounded-full text-base md:text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
-                  >
-                    QUERO ACESSAR AGORA
-                  </button>
-                </div>
+                <button
+                  onClick={scrollToOffer}
+                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-4 px-8 rounded-full text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                >
+                  QUERO ACESSO IMEDIATO
+                </button>
               </div>
-              <div className="animate-slide-up">
+              <div>
                 <img
-                  src="/images/design-mode/dmartenova-min.png"
+                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/dmartenova-min%20%281%29-3UnkwND5zXpMBNmIkrvyd1rcz7mGTb.png"
                   alt="Acesso no celular"
-                  className="w-full rounded-xl shadow-lg"
+                  className="w-full rounded-xl shadow-2xl"
                 />
               </div>
             </div>
@@ -336,13 +268,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Bonuses Section */}
-      <section className="py-8 bg-white">
+      {/* Bonuses - Substituído pelos novos bônus do arquivo anexado */}
+      <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">Você irá ganhar 6 bônus</h2>
-              <p className="text-lg md:text-xl text-gray-600">se comprar ainda HOJE</p>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">6 BÔNUS DE PRESENTE — APENAS HOJE</h2>
+              <p className="text-xl text-gray-600">Valor real: mais de R$600 — Hoje: GRÁTIS com a compra</p>
             </div>
 
             <div className="grid grid-cols-2 lg:grid-cols-2 gap-3 md:gap-6 auto-rows-fr">
@@ -375,11 +307,7 @@ export default function HomePage() {
                   style={{ animationDelay: `${index * 0.15}s` }}
                 >
                   <img
-                    src={
-                      bonus.image ||
-                      "https://dotadomaximo.com.br/wp-content/uploads/2022/04/seja-malicioso-na-cama-pro-1.png" ||
-                      "/placeholder.svg" ||
-                      "/placeholder.svg" || "/placeholder.svg"}
+                    src={bonus.image || "/placeholder.svg"}
                     alt={bonus.title}
                     className="w-full h-40 md:h-56 object-cover"
                   />
@@ -440,26 +368,112 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Offer Section */}
-      <section id="offer-67" className="py-8 bg-white">
+      {/* Testimonials – Videos - Traduzido para português */}
+      <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="animate-fade-in">
-              <h2 className="text-2xl md:text-3xl lg:text-5xl font-bold mb-4 text-gray-900">
-                APENAS 36% DOS HOMENS CONSEGUEM FAZER AS MULHERES GOZAREM!
-              </h2>
-              <p className="text-base md:text-lg mb-8 text-gray-600 max-w-2xl mx-auto">
-                Sua compra é <span className="text-blue-600 font-bold">100% segura</span> e discreta!
-              </p>
-              <p className="text-sm md:text-base text-gray-600 mb-8">
-                Enviaremos o acesso ao treinamento para o seu email e WhatsApp imediatamente após a confirmação de
-                pagamento. Podendo acessar pelo seu celular ou computador. Rápido, prático e fácil!
-              </p>
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-6">
+              Milhares de homens no Brasil já estão usando este método
+            </h2>
+
+            <p className="text-center text-xl text-gray-600 mb-2">Mais de</p>
+            <p className="text-center text-5xl text-[#23CCF6] mb-12 font-extrabold">80.000 resultados comprovados</p>
+
+            <div className="grid md:grid-cols-2 gap-8 mb-8">
+              <div className="max-w-6xl mx-auto">
+  
+  
+  
+
+  <div className="grid md:grid-cols-2 gap-6 md:gap-8 mb-12">
+    {[
+      { name: "Depoimento Luan", videoId: "519485244" },
+      { name: "Depoimento Thiago", videoId: "709902913" },
+    ].map((testimonial, index) => (
+      <div key={index} className="animate-fade-in" style={{ animationDelay: `${index * 0.2}s` }}>
+        <p className="text-center text-white mb-4 font-medium bg-gray-900 py-2 rounded-lg text-sm md:text-base">
+          {testimonial.name}
+        </p>
+        <div className="relative">
+          <iframe
+            src={`https://player.vimeo.com/video/${testimonial.videoId}?color&autopause=0&loop=0&muted=0&title=1&portrait=1&byline=1`}
+            allowFullScreen
+            frameBorder="0"
+            width="100%"
+            height="400"
+            style={{ maxWidth: "100%", height: "auto", aspectRatio: "16/9" }}
+            className="rounded-xl shadow-lg"
+          />
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <div className="grid md:grid-cols-2 gap-6 md:gap-8 mb-12">
+    {[
+      { name: "Depoimento Carlos", videoId: "519484866" },
+    ].map((testimonial, index) => (
+      <div key={index + 2} className="animate-fade-in" style={{ animationDelay: `${(index + 2) * 0.2}s` }}>
+        <p className="text-center text-white mb-4 font-medium bg-gray-900 py-2 rounded-lg text-sm md:text-base">
+          {testimonial.name}
+        </p>
+        <div className="relative">
+          <iframe
+            src={`https://player.vimeo.com/video/${testimonial.videoId}?color&autopause=0&loop=0&muted=0&title=1&portrait=1&byline=1`}
+            allowFullScreen
+            frameBorder="0"
+            width="100%"
+            height="400"
+            style={{ maxWidth: "100%", height: "auto", aspectRatio: "16/9" }}
+            className="rounded-xl shadow-lg"
+          />
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+              
             </div>
 
-            <div className="bg-gradient-to-br from-[#23CCF6]/10 to-cyan-50 rounded-3xl p-6 md:p-8 mb-6 animate-slide-up">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-                {/* Basic Plan */}
+            <div className="grid md:grid-cols-1 gap-8 max-w-2xl mx-auto mb-8">
+              
+            </div>
+
+            {/* Guarantee Box - Traduzido para português */}
+            <div className="bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-500 rounded-xl p-6 sm:p-8 text-center mt-8">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
+                Resultados Garantidos ou devolvemos seu dinheiro!
+              </h2>
+              <p className="text-center mb-4">
+                <span className="text-[#24b2ff] font-bold text-lg">NÃO PERCA ESSA OPORTUNIDADE!</span>
+              </p>
+              <p className="text-gray-700 text-lg">
+                Você tem <strong>30 dias</strong> para testar o método. Se não sentir resultados, devolvemos{" "}
+                <strong>100% do seu dinheiro</strong>. Sem perguntas, sem complicações.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Offer Section (plans) - Substituído pelos novos planos do arquivo anexado */}
+      <section id="offer-67" className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl md:text-5xl font-bold mb-6 text-gray-900">
+              APENAS 36% DOS HOMENS CONSEGUEM FAZER AS MULHERES GOZAREM!
+            </h2>
+            <p className="text-lg mb-6 text-gray-600 max-w-2xl mx-auto">
+              Sua compra é <span className="text-blue-600 font-bold">100% segura e discreta</span>.
+            </p>
+            <p className="text-base text-gray-600 mb-12">
+              Você receberá acesso ao treinamento por email e WhatsApp imediatamente após a confirmação do pagamento.
+              Pode acessar pelo celular ou computador.
+            </p>
+
+            <div className="bg-gradient-to-br from-[#23CCF6]/10 to-cyan-50 rounded-3xl p-8 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                {/* Basic Plan - Novo plano básico */}
                 <div className="relative bg-white rounded-2xl p-6 hover:shadow-2xl transition-all duration-300 shadow-xl">
                   <div className="text-center space-y-4 mb-6">
                     <h3 className="text-xl font-bold text-gray-900">Plano Básico</h3>
@@ -496,7 +510,7 @@ export default function HomePage() {
                   </button>
                 </div>
 
-                {/* Premium Plan */}
+                {/* Premium Plan - Novo plano completo */}
                 <div className="relative bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 rounded-2xl p-6 hover:shadow-2xl hover:shadow-cyan-500/50 transition-all duration-300 shadow-xl ring-1 ring-slate-600">
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-[#23CCF6] to-cyan-400 text-gray-900 px-4 py-1 rounded-full text-xs font-bold shadow-lg">
                     MAIS ESCOLHIDO
@@ -553,6 +567,7 @@ export default function HomePage() {
               </div>
             </div>
 
+            {/* Upsell Popup - Novo popup */}
             {showUpsellPopup && (
               <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
                 <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl">
@@ -561,10 +576,12 @@ export default function HomePage() {
                       <div className="inline-block bg-gradient-to-r from-[#EF3F40] to-red-600 text-white px-4 py-2 rounded-full text-xs font-bold">
                         🎉 OFERTA ESPECIAL DESBLOQUEADA!
                       </div>
-                      
+
                       <p className="text-gray-700 text-sm leading-snug">
-                        VOCÊ LIBEROU UM DESCONTO DE<br/>
-                        <span className="text-red-600 text-base font-bold">50% PARA LEVAR O PLANO</span><br/>
+                        VOCÊ LIBEROU UM DESCONTO DE
+                        <br />
+                        <span className="text-red-600 text-base font-bold">50% PARA LEVAR O PLANO</span>
+                        <br />
                         COMPLETO! DE 34,90 POR APENAS:
                       </p>
                     </div>
@@ -574,8 +591,9 @@ export default function HomePage() {
                       <p className="text-gray-700 text-sm">ou 3x de R$6,63</p>
                       <div className="text-center bg-red-50 rounded-lg p-3 border border-red-200 mt-4">
                         <p className="text-red-600 font-semibold text-xs leading-snug">
-                          VOCÊ VAI RECEBER TODOS OS BÔNUS DO<br/>
-                          PROTOCOLO CONGOLÊS, ATUALIZAÇÕES E<br/>
+                          VOCÊ VAI RECEBER TODOS OS BÔNUS DO
+                          <br />
+                          PROTOCOLO CONGOLÊS, ATUALIZAÇÕES E<br />
                           ACESSO VITALÍCIO. APROVEITE!
                         </p>
                       </div>
@@ -598,7 +616,9 @@ export default function HomePage() {
                       </button>
                     </div>
 
-                    <p className="text-center text-sm text-gray-600 font-semibold">⏰ Oferta expira em: <span className="text-red-500">{formatTime(timeLeft)}</span></p>
+                    <p className="text-center text-sm text-gray-600 font-semibold">
+                      ⏰ Oferta expira em: <span className="text-red-500">{formatTime(timeLeft)}</span>
+                    </p>
                   </div>
                 </div>
               </div>
@@ -607,154 +627,57 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Guarantee Section */}
-      
-
-      {/* Testimonials Section */}
-      <section className="py-8 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-8">
-              Milhares de clientes satisfeitos com o método!
-            </h2>
-            <p className="text-center text-lg md:text-xl text-gray-600 mb-2">
-              Já transformamos a vida sexual de mais de
-            </p>
-            <p className="text-center text-4xl md:text-5xl font-bold text-[#23CCF6] mb-12">80 mil homens</p>
-
-            <div className="grid md:grid-cols-2 gap-6 md:gap-8 mb-12">
-              {[
-                { name: "Depoimento Luan", videoId: "519485244" },
-                { name: "Depoimento Thiago", videoId: "709902913" },
-              ].map((testimonial, index) => (
-                <div key={index} className="animate-fade-in" style={{ animationDelay: `${index * 0.2}s` }}>
-                  <p className="text-center text-white mb-4 font-medium bg-gray-900 py-2 rounded-lg text-sm md:text-base">
-                    {testimonial.name}
-                  </p>
-                  <div className="relative">
-                    <iframe
-                      src={`https://player.vimeo.com/video/${testimonial.videoId}?color&autopause=0&loop=0&muted=0&title=1&portrait=1&byline=1`}
-                      allowFullScreen
-                      frameBorder="0"
-                      width="100%"
-                      height="400"
-                      style={{ maxWidth: "100%", height: "auto", aspectRatio: "16/9" }}
-                      className="rounded-xl shadow-lg"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6 md:gap-8 mb-12">
-              {[
-                { name: "Depoimento Carlos", videoId: "519484866" },
-                { name: "Depoimento Gabriel", videoId: "699823785" },
-              ].map((testimonial, index) => (
-                <div key={index + 2} className="animate-fade-in" style={{ animationDelay: `${(index + 2) * 0.2}s` }}>
-                  <p className="text-center text-white mb-4 font-medium bg-gray-900 py-2 rounded-lg text-sm md:text-base">
-                    {testimonial.name}
-                  </p>
-                  <div className="relative">
-                    <iframe
-                      src={`https://player.vimeo.com/video/${testimonial.videoId}?color&autopause=0&loop=0&muted=0&title=1&portrait=1&byline=1`}
-                      allowFullScreen
-                      frameBorder="0"
-                      width="100%"
-                      height="400"
-                      style={{ maxWidth: "100%", height: "auto", aspectRatio: "16/9" }}
-                      className="rounded-xl shadow-lg"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="grid md:grid-cols-1 gap-6 md:gap-8 max-w-2xl mx-auto">
-              {[{ name: "Depoimento Nicolas", videoId: "519485341" }].map((testimonial, index) => (
-                <div key={index + 4} className="animate-fade-in">
-                  <p className="text-center text-white mb-4 font-medium bg-gray-900 py-2 rounded-lg text-sm md:text-base">
-                    {testimonial.name}
-                  </p>
-                  <div className="relative">
-                    <iframe
-                      src={`https://player.vimeo.com/video/${testimonial.videoId}?color&autopause=0&loop=0&muted=0&title=1&portrait=1&byline=1`}
-                      allowFullScreen
-                      frameBorder="0"
-                      width="100%"
-                      height="400"
-                      style={{ maxWidth: "100%", height: "auto", aspectRatio: "16/9" }}
-                      className="rounded-xl shadow-lg"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-8 text-center bg-gray-100 rounded-xl p-4">
-              <p className="text-gray-700 text-sm md:text-base">
-                Contribua com nosso método. Envie seu depoimento para:{" "}
-                <span className="font-bold">contato@dotadomaximo.com.br</span>
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="py-8 bg-gradient-to-br from-blue-50 to-cyan-50">
+      {/* FAQ - Traduzido para português */}
+      <section className="py-16 bg-gradient-to-br from-blue-50 to-cyan-50">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-8">
-              Perguntas Frequentes
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">
+              Perguntas importantes antes de começar
             </h2>
+
             <div className="space-y-4">
               {[
                 {
                   question: "Como funciona o método?",
                   answer:
-                    "O metodo Dotado Maximo é um metodo 100% natural e seguro, aonde são ensinado técnicas e exercícios exclusivos para crescer e engrossar o pênis, bem como dicas e táticas para controlar a ejaculação e melhorar as ereções. Você deverá práticar as técnicas por uns 10 minutinhos por dia, podendo ser no horario do banho. Os primeiros resultados já podem serem notados já na segunda semana de prática. Os resultados podem chegar em até 6CM.",
+                    "O método é 100% natural e seguro. Nele você vai aprender exercícios, rotinas e técnicas que aumentam o tamanho, grossura e potência do pênis. Você vai praticar apenas 10 minutos por dia, e os primeiros resultados costumam aparecer na segunda semana.",
                 },
                 {
-                  question: "Isso funcionará para mim?",
+                  question: "Isso vai funcionar para mim?",
                   answer:
-                    "Nossa taxa de sucesso é de 98%. Nossos clientes ficam muito satisfeito com os resultados que obtém. Nós temos total convicção que se você praticar os exercícios corretamente, também obterá resultados satisfatórios. E ainda oferecemos garantia de 30 dias. Caso não obter resultados satisfatórios devolvemos seu dinheiro, sem perguntas.",
+                    "Sim. Mais de 98% dos homens relatam resultados visíveis. Se você seguir as rotinas corretamente, vai notar mudanças reais. Além disso, você tem garantia de 30 dias.",
                 },
                 {
-                  question: "Essas técnicas são seguras?",
+                  question: "Esse método é seguro?",
                   answer:
-                    "Sim, elas são apoiada e endossada pela comunidade médica, isso porque o processo não é dolorido, não causa complicações futuras e são muito efetivas para o aumento peniano, embora muito desconhecidas pela maioria das pessoas, elas vem sendo a melhor forma para aumentar o tamanho e a grossura do pênis",
+                    "Completamente seguro. Não causa dor, não produz efeitos colaterais e não requer medicamentos. É um método aprovado por profissionais e testado por milhares de homens.",
                 },
                 {
-                  question: "Existe algum tipo de garantia?",
+                  question: "Terei garantia?",
                   answer:
-                    "Sim, o tempo mínimo para se obter resultados é de 2 semanas, caso não perceba nenhuma evolução nesse periodo é só solicitar o reembolso. Você receberá no seu email um login e senha para logar na plataforma monetizze, e é lá que terá a opção de solicitar o reembolso.",
+                    "Sim. Se você não notar nenhum resultado em 2 semanas, pode solicitar reembolso total. Seu acesso é imediato e vitalício.",
                 },
                 {
                   question: "Outras dúvidas",
                   answer:
-                    "Quando vou começar a ver os resultados? Os primeiros resultados podem serem notados já na segunda semana de prática. Terei que comprar algo? Não, você não precisará comprar nenhum aparelho ou remédio. Os exercícios são simples de praticar, não causam dor e o processo é bem rápido, você levará apenas 10 minutinhos para praticar. Vocês tem algum tipo de linha de apoio, se eu precisar de ajuda? Sim, oferecemos suporte no whatsapp e e-mail. Nós responderemos às suas perguntas o mais rápido possível. Qualquer dúvida que você estiver pode chamar nos no whatsapp que te ajudaremos. Alguma coisa será enviada para minha casa? Não, você receberá todo material para acessar pelo seu celular ou computador. Nós respeitamos sua privacidade, você vai querer que o nosso treinamento seja um pequeno segredo, então o extrato do seu cartão de crédito será simplesmente cobrado como 'MonetizeDM' pela sua privacidade. O meu acesso ao treinamento será vitalicio? Sim, você terá uma conta exclusiva para logar na nossa área de membros. E esse acesso sempre está disponivel para você. Você pagará pelo método somente 1x. Funciona com todos homens? Na maioria das vezes, sim. Entre em contato conosco pelo suporte para avaliarmos a sua situação.",
+                    "Você não precisará comprar nada adicional. Não dói. Funciona em qualquer idade adulta. Você terá acesso pelo celular e computador. E sua compra é 100% discreta.",
                 },
               ].map((faq, index) => (
-                <div
-                  key={index}
-                  className="bg-white rounded-xl shadow-lg overflow-hidden animate-fade-in border-l-4 border-blue-600"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
+                <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden border-l-4 border-blue-600">
                   <button
                     onClick={() => toggleFaq(index)}
-                    className="flex items-center justify-between w-full p-4 md:p-6 text-left hover:bg-gray-50 transition-colors duration-200"
+                    className="flex items-center justify-between w-full p-6 text-left hover:bg-gray-50 transition-colors duration-200"
                   >
-                    <span className="text-base md:text-lg font-medium text-gray-900">{faq.question}</span>
+                    <span className="text-lg font-medium text-gray-900">{faq.question}</span>
                     {openFaqItems[index] ? (
-                      <ChevronUp className="w-5 h-5 text-gray-500" />
+                      <ChevronUp className="w-5 h-5 text-gray-500 flex-shrink-0" />
                     ) : (
-                      <ChevronDown className="w-5 h-5 text-gray-500" />
+                      <ChevronDown className="w-5 h-5 text-gray-500 flex-shrink-0" />
                     )}
                   </button>
                   {openFaqItems[index] && (
-                    <div className="px-4 md:px-6 pb-6">
-                      <p className="text-sm md:text-base text-gray-600 leading-relaxed">{faq.answer}</p>
+                    <div className="px-6 pb-6">
+                      <p className="text-base text-gray-600 leading-relaxed">{faq.answer}</p>
                     </div>
                   )}
                 </div>
@@ -764,16 +687,19 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
+      {/* Footer - Traduzido para português */}
       <footer className="bg-gray-900 text-white py-8">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <p className="text-gray-400 mb-4 text-sm md:text-base">
-              © 2025 Método Dotado Máximo. Todos os direitos reservados.
-            </p>
+            <p className="text-gray-400">© 2025 Protocolo Congolês — Todos os direitos reservados.</p>
           </div>
         </div>
       </footer>
+
+      {/* CTA Fixo no Mobile */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white/0 px-4 pb-4 z-50 md:hidden">
+        {/* Placeholder for mobile CTA */}
+      </div>
     </div>
   )
 }
