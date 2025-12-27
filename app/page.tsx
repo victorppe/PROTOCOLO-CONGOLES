@@ -154,19 +154,17 @@ export default function HomePage() {
                 {
                   title: "Apenas 10 minutos ao dia",
                   description: "Leva apenas 10 minutos de treino diário",
-                  image:
-                    "https://dotadmaximo.website/035c19e870ba46769eadc05f4ff9218c/images/icone-relogio-de-fogo-300x300.png",
+                  image: "/images/relogio10minutos-1024x1024.png",
                 },
                 {
                   title: "Ganhe até 6CM e deixe mais grosso",
                   description: "Nosso método irá aumentar e engrossar seu pênis",
-                  image:
-                    "https://dotadmaximo.website/035c19e870ba46769eadc05f4ff9218c/images/icone-pau-grande-300x300.png",
+                  image: "/images/ate-6cm-1024x1024.png",
                 },
                 {
                   title: "Nenhum aparelho necessário",
                   description: "Tudo que você irá fazer é praticar os exercícios com suas mãos",
-                  image: "https://dotadmaximo.website/035c19e870ba46769eadc05f4ff9218c/images/icone-bomba-300x300.png",
+                  image: "/images/semk-bomba-1024x1024.png",
                 },
               ].map((benefit, index) => (
                 <div
@@ -192,20 +190,18 @@ export default function HomePage() {
                 {
                   title: "Total controle da ejaculação",
                   description: "De fim a ejaculação precoce e aguente o tempo que desejar",
-                  image:
-                    "https://dotadmaximo.website/035c19e870ba46769eadc05f4ff9218c/images/icone-relogio-de-fogo-300x300.png",
+                  image: "/images/totol-controle-1-1024x1024.png",
                 },
                 {
                   title: "Ereções firmes e rígidas",
                   description:
                     "Ereções firmes como rocha por muito tempo através de um músculo pélvico forte e desenvolvido",
-                  image:
-                    "https://dotadmaximo.website/035c19e870ba46769eadc05f4ff9218c/images/icone-homem-forte-300x300.png",
+                  image: "/images/erecoes-firmes-1024x1024.png",
                 },
                 {
                   title: "Resultados Rápidos",
                   description: "Primeiros resultados já com 2 semanas de prática",
-                  image: "https://dotadmaximo.website/035c19e870ba46769eadc05f4ff9218c/images/icone-bomba-300x300.png",
+                  image: "/images/resultados-rapiudos-1-1024x1024.png",
                 },
               ].map((benefit, index) => (
                 <div
@@ -369,7 +365,10 @@ export default function HomePage() {
                       bonus.image ||
                       "https://dotadomaximo.com.br/wp-content/uploads/2022/04/seja-malicioso-na-cama-pro-1.png" ||
                       "/placeholder.svg" ||
-                      "/placeholder.svg" || "/placeholder.svg"}
+                      "/placeholder.svg" ||
+                      "/placeholder.svg" ||
+                      "/placeholder.svg"
+                    }
                     alt={bonus.title}
                     className="w-full h-40 md:h-56 object-cover"
                   />
@@ -551,10 +550,12 @@ export default function HomePage() {
                       <div className="inline-block bg-gradient-to-r from-[#EF3F40] to-red-600 text-white px-4 py-2 rounded-full text-xs font-bold">
                         🎉 OFERTA ESPECIAL DESBLOQUEADA!
                       </div>
-                      
+
                       <p className="text-gray-700 text-sm leading-snug">
-                        VOCÊ LIBEROU UM DESCONTO DE<br/>
-                        <span className="text-red-600 text-base font-bold">50% PARA LEVAR O PLANO</span><br/>
+                        VOCÊ LIBEROU UM DESCONTO DE
+                        <br />
+                        <span className="text-red-600 text-base font-bold">50% PARA LEVAR O PLANO</span>
+                        <br />
                         COMPLETO! DE 34,90 POR APENAS:
                       </p>
                     </div>
@@ -564,8 +565,9 @@ export default function HomePage() {
                       <p className="text-gray-700 text-sm">ou 3x de R$6,63</p>
                       <div className="text-center bg-red-50 rounded-lg p-3 border border-red-200 mt-4">
                         <p className="text-red-600 font-semibold text-xs leading-snug">
-                          VOCÊ VAI RECEBER TODOS OS BÔNUS DO<br/>
-                          PROTOCOLO CONGOLÊS, ATUALIZAÇÕES E<br/>
+                          VOCÊ VAI RECEBER TODOS OS BÔNUS DO
+                          <br />
+                          PROTOCOLO CONGOLÊS, ATUALIZAÇÕES E<br />
                           ACESSO VITALÍCIO. APROVEITE!
                         </p>
                       </div>
@@ -588,7 +590,9 @@ export default function HomePage() {
                       </button>
                     </div>
 
-                    <p className="text-center text-sm text-gray-600 font-semibold">⏰ Oferta expira em: <span className="text-red-500">{formatTime(timeLeft)}</span></p>
+                    <p className="text-center text-sm text-gray-600 font-semibold">
+                      ⏰ Oferta expira em: <span className="text-red-500">{formatTime(timeLeft)}</span>
+                    </p>
                   </div>
                 </div>
               </div>
@@ -598,7 +602,6 @@ export default function HomePage() {
       </section>
 
       {/* Guarantee Section */}
-      
 
       {/* Testimonials Section */}
       <section className="py-8 bg-white">
@@ -623,7 +626,7 @@ export default function HomePage() {
                   </p>
                   <div className="relative">
                     <iframe
-                      src={`https://player.vimeo.com/video/${testimonial.videoId}?color&autopause=0&loop=0&muted=0&title=1&portrait=1&byline=1`}
+                      src={`https://player.vimeo.com/video/${testimonial.videoId}?color&autopause=0&loop=0&muted=0&title=0&portrait=0&byline=0`}
                       allowFullScreen
                       frameBorder="0"
                       width="100%"
@@ -647,7 +650,7 @@ export default function HomePage() {
                   </p>
                   <div className="relative">
                     <iframe
-                      src={`https://player.vimeo.com/video/${testimonial.videoId}?color&autopause=0&loop=0&muted=0&title=1&portrait=1&byline=1`}
+                      src={`https://player.vimeo.com/video/${testimonial.videoId}?color&autopause=0&loop=0&muted=0&title=0&portrait=0&byline=0`}
                       allowFullScreen
                       frameBorder="0"
                       width="100%"
@@ -668,7 +671,7 @@ export default function HomePage() {
                   </p>
                   <div className="relative">
                     <iframe
-                      src={`https://player.vimeo.com/video/${testimonial.videoId}?color&autopause=0&loop=0&muted=0&title=1&portrait=1&byline=1`}
+                      src={`https://player.vimeo.com/video/${testimonial.videoId}?color&autopause=0&loop=0&muted=0&title=0&portrait=0&byline=0`}
                       allowFullScreen
                       frameBorder="0"
                       width="100%"
