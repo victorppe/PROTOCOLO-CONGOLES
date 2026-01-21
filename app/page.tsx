@@ -223,15 +223,31 @@ export default function HomePage() {
           <div className="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-2xl p-4 md:p-6">
             <div className="grid md:grid-cols-2 gap-4">
               {/* Basic */}
-              
+              <div className="bg-white rounded-xl p-4 shadow-lg">
+                <h3 className="text-lg font-bold text-gray-900 mb-3">Plano Basico</h3>
+                <p className="text-4xl font-extrabold text-red-500 mb-1">R$9,90</p>
+                <p className="text-gray-600 text-sm mb-4">Pagamento unico</p>
+                <div className="space-y-2 mb-4 p-3 bg-gray-100 rounded-lg text-left text-sm">
+                  <p><span className="text-cyan-500">&#10004;</span> Acesso ao protocolo basico</p>
+                  <p><span className="text-cyan-500">&#10004;</span> Tecnicas de jelq</p>
+                  <p><span className="text-cyan-500">&#10004;</span> Exercicios de aquecimento</p>
+                  <p><span className="text-cyan-500">&#10004;</span> Garantia de 30 dias</p>
+                </div>
+                <button
+                  onClick={() => setShowPopup(true)}
+                  className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 rounded-xl transition-all"
+                >
+                  ESCOLHER PLANO BASICO
+                </button>
+              </div>
 
               {/* Premium */}
               <div className="relative bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl p-4 shadow-lg text-white">
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-cyan-400 text-gray-900 px-3 py-1 rounded-full text-xs font-bold">
                   MAIS ESCOLHIDO
                 </div>
-                <h3 className="text-lg font-bold mb-3 mt-2">Acesso Completo </h3>
-                <p className="text-gray-300 line-through text-sm">de R$147,00</p>
+                <h3 className="text-lg font-bold mb-3 mt-2">Acesso Vitalicio</h3>
+                <p className="text-gray-300 line-through text-sm">de R$97,00</p>
                 <p className="text-4xl font-extrabold text-red-500 mb-1">R$39,90</p>
                 <p className="text-gray-300 text-sm mb-4">Pagamento unico</p>
                 <div className="space-y-2 mb-4 p-3 bg-slate-600/50 rounded-lg text-left text-sm">
@@ -248,7 +264,7 @@ export default function HomePage() {
                   rel="noopener noreferrer"
                   className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 rounded-xl transition-all block text-center"
                 >
-                  GARANTIR PLANO COMPLETO! 
+                  GARANTIR ACESSO VITALICIO
                 </a>
               </div>
             </div>
