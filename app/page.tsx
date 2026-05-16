@@ -1,399 +1,1360 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback, useEffect, useRef, memo } from "react"
 
-const benefits = [
-  { title: "Apenas 10 minutos ao dia", description: "Leva apenas 10 minutos de treino diario", image: "/images/relogio10minutos-1024x1024.png" },
-  { title: "Ganhe ate 6CM e deixe mais grosso", description: "Nosso metodo ira aumentar e engrossar seu penis", image: "/images/ate-6cm-1024x1024.png" },
-  { title: "Nenhum aparelho necessario", description: "Tudo que voce ira fazer e praticar os exercicios com suas maos", image: "/images/semk-bomba-1024x1024.png" },
-  { title: "Total controle da ejaculacao", description: "De fim a ejaculacao precoce e aguente o tempo que desejar", image: "/images/totol-controle-1-1024x1024.png" },
-  { title: "Erecoes firmes e rigidas", description: "Erecoes firmes como rocha por muito tempo atraves de um musculo pelvico forte", image: "/images/erecoes-firmes-1024x1024.png" },
-  { title: "Resultados Rapidos", description: "Primeiros resultados ja com 2 semanas de pratica", image: "/images/resultados-rapiudos-1-1024x1024.png" },
+// ─── CDN constants (used for preconnect) ──────────────────────────────────────
+const IMG_CDN = "https://metodotripe.shop"
+const VID_CDN = "https://institutoduramax.com"
+const AVT_CDN = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com"
+
+// ─── Slideshow data (kept top-level so we can preload the first one) ──────────
+const SLIDES = [
+  { src: `${IMG_CDN}/wp-content/uploads/2026/02/02-.jpg`,
+    label: "Patient R.S. — +5.2cm · Verified" },
+  { src: `${IMG_CDN}/wp-content/uploads/2026/01/22109742.jpg`,
+    label: "Patient M.L. — +6.1cm · Verified" },
+  { src: `${IMG_CDN}/wp-content/uploads/2026/02/PACIENTE-H-2990-ANTES-E-DEPOIS-1-1-scaled-1.webp`,
+    label: "Patient H.L. — +4.8cm · Verified" },
+  { src: `${IMG_CDN}/wp-content/uploads/2026/02/daf6ef_d639bfc5b0a34189b18c48e3f54f2763_mv2-1.png`,
+    label: "Patient A.C. — +5.7cm · Verified" },
+  { src: `${IMG_CDN}/wp-content/uploads/2026/02/7564b4c41b95c4d46ca0_-_94d8bd698ca2c759ce37_-_inserir-um-titulo.jpg`,
+    label: "Patient J.G. — +4.3cm · Verified" },
+] as const
+
+// ─── Resource Hints + Fonts ───────────────────────────────────────────────────
+// Next.js (App Router) and React 19 automatically hoist <link> tags to <head>.
+// This is far faster than @import inside <style> (which is render-blocking).
+
+function ResourceHints() {
+  return (
+    <>
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      <link rel="preconnect" href={IMG_CDN} crossOrigin="anonymous" />
+      <link rel="preconnect" href={VID_CDN} crossOrigin="anonymous" />
+      <link rel="preconnect" href={AVT_CDN} crossOrigin="anonymous" />
+      {/* Only the weights actually used: Montserrat 700/800 + Roboto 400/500/600/700 */}
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Roboto:wght@400;500;600;700&display=swap"
+      />
+      {/* Preload first slideshow image — used on the loading screen */}
+      <link rel="preload" as="image" href={SLIDES[0].src} fetchPriority="high" />
+    </>
+  )
+}
+
+function GlobalStyles() {
+  return (
+    <style dangerouslySetInnerHTML={{
+      __html: `
+        @keyframes pulse-border {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(2, 95, 222, 0.4); }
+          50% { box-shadow: 0 0 0 8px rgba(2, 95, 222, 0); }
+        }
+        @keyframes check-in {
+          0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+          50% { transform: scale(1.2) rotate(0deg); opacity: 1; }
+          100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        @keyframes slide-up {
+          0% { opacity: 0; transform: translateY(12px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes progress-glow {
+          0%, 100% { box-shadow: 0 0 8px rgba(2, 95, 222, 0.3); }
+          50% { box-shadow: 0 0 16px rgba(2, 95, 222, 0.6); }
+        }
+        .animate-pulse-border { animation: pulse-border 0.6s ease-out; }
+        .animate-check-in { animation: check-in 0.2s ease-out forwards; }
+        .animate-slide-up { animation: slide-up 0.25s ease-out forwards; will-change: transform, opacity; }
+        .animate-progress-glow { animation: progress-glow 2s ease-in-out infinite; }
+
+        /* OptionBtn — CSS-only hover (no React re-renders on mouse move) */
+        .opt-btn {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 0.75rem;
+          padding: 1rem 1.25rem;
+          font-family: 'Roboto', sans-serif;
+          font-size: 14px;
+          font-weight: 500;
+          color: #5e7d9f;
+          background: #fff;
+          border: 2px solid #e5e7eb;
+          border-radius: 8px;
+          text-align: left;
+          cursor: pointer;
+          transition: transform .18s, background-color .18s, border-color .18s, color .18s, font-weight .18s;
+        }
+        @media (hover: hover) {
+          .opt-btn:hover:not(:disabled):not([data-selected="true"]) {
+            color: #003466;
+            background: #f0f5ff;
+            border-color: #025fde;
+            font-weight: 600;
+            transform: scale(1.01);
+          }
+          .opt-btn:hover:not(:disabled):not([data-selected="true"]) .opt-radio {
+            border-color: #025fde;
+          }
+        }
+        .opt-btn[data-selected="true"] {
+          color: #fff;
+          background: #003466;
+          border-color: #003466;
+          font-weight: 700;
+          transform: scale(1.02);
+        }
+        .opt-radio {
+          width: 1.25rem;
+          height: 1.25rem;
+          border-radius: 9999px;
+          flex-shrink: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 2px solid #d1d5db;
+          background: transparent;
+          transition: border-color .18s, background-color .18s;
+        }
+        .opt-btn[data-selected="true"] .opt-radio {
+          border: none;
+          background: #36c57c;
+        }
+
+        /* CTA hover lift */
+        .cta-btn { transition: transform .18s, box-shadow .18s; }
+        @media (hover: hover) {
+          .cta-btn:hover:not(:disabled) { transform: translateY(-2px); }
+        }
+      `
+    }} />
+  )
+}
+
+// ─── Tracking (deferred to idle, off main thread on first paint) ──────────────
+
+const loadFbPixel = () => {
+  if (typeof window === "undefined" || (window as any).fbq) return
+  const f = window as any
+  const n: any = (f.fbq = function (...a: any[]) { n.callMethod ? n.callMethod(...a) : n.queue.push(a) })
+  if (!f._fbq) f._fbq = n
+  n.push = n; n.loaded = true; n.version = "2.0"; n.queue = []
+  const s = document.createElement("script")
+  s.async = true
+  s.src = "https://connect.facebook.net/en_US/fbevents.js"
+  document.head.appendChild(s)
+  f.fbq("init", "1486018329907497")
+  f.fbq("track", "PageView")
+}
+
+const useFbPixel = () => {
+  useEffect(() => {
+    const idle = (window as any).requestIdleCallback as
+      | ((cb: () => void, opts?: { timeout: number }) => number)
+      | undefined
+    if (idle) {
+      idle(loadFbPixel, { timeout: 3000 })
+    } else {
+      const t = setTimeout(loadFbPixel, 1500)
+      return () => clearTimeout(t)
+    }
+  }, [])
+}
+
+// ─── Prefetch slideshow images during the quiz, so loading screen is instant ──
+
+const usePrefetchSlides = () => {
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    const run = () => {
+      // Skip index 0 — already preloaded via <link rel="preload">
+      for (let i = 1; i < SLIDES.length; i++) {
+        const img = new Image()
+        img.decoding = "async"
+        img.loading = "eager"
+        img.src = SLIDES[i].src
+      }
+    }
+    const idle = (window as any).requestIdleCallback as
+      | ((cb: () => void, opts?: { timeout: number }) => number)
+      | undefined
+    if (idle) idle(run, { timeout: 4000 })
+    else setTimeout(run, 800)
+  }, [])
+}
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+type Screen = "quiz" | "loading" | "results"
+
+interface State {
+  screen: Screen
+  stepIndex: number
+  answers: Record<number, string>
+  loadProgress: number
+  height: number
+  heightUnit: "cm" | "ft"
+  feetVal: number
+  inchVal: number
+}
+
+// ─── Quiz Content ─────────────────────────────────────────────────────────────
+
+type Step =
+  | { kind: "q"; id: string; q: string; hint: string; opts: readonly string[]; note?: string }
+  | { kind: "h"; id: string; q: string; hint: string }
+  | { kind: "info"; id: string; title: string; video: string; quote: string }
+
+const STEPS: Step[] = [
+  {
+    kind: "q",
+    id: "age",
+    q: "How old are you?",
+    hint: "This determines your growth window and protocol intensity",
+    opts: ["18 – 25", "26 – 35", "36 – 50", "51 – 65"],
+  },
+  {
+    kind: "q",
+    id: "goal",
+    q: "What's your primary goal right now?",
+    hint: "We'll build your plan around this",
+    opts: [
+      "Increase size — length and girth",
+      "Last longer and improve stamina",
+      "Stronger, harder erections",
+      "All of the above",
+    ],
+  },
+  {
+    kind: "q",
+    id: "erections",
+    q: "How often do you wake up with a morning erection?",
+    hint: "A key indicator of testosterone and blood flow health",
+    note: "Morning erections are the clearest indicator of testosterone production and arterial health.",
+    opts: ["Almost never", "Rarely — once or twice a week", "Most mornings", "Every single morning"],
+  },
+  {
+    kind: "info",
+    id: "info1",
+    title: "Pelvic floor weakness can be the invisible cause behind premature ejaculation",
+    video: `${VID_CDN}/wp-content/uploads/2025/05/Assoalho-Pelvico-2.mp4`,
+    quote: "Chronic tension or weakness of the pelvic muscles can make ejaculation automatic and uncontrollable.",
+  },
+  {
+    kind: "q",
+    id: "size",
+    q: "What's your current erect length?",
+    hint: "Be honest — your results are completely private",
+    opts: [
+      "Under 12 cm  (4.7\")",
+      "12 – 14 cm  (4.7\" – 5.5\")",
+      "14 – 16 cm  (5.5\" – 6.3\")",
+      "Over 16 cm  (6.3\"+)",
+    ],
+  },
+  {
+    kind: "q",
+    id: "sleep",
+    q: "How many hours of sleep do you typically get?",
+    hint: "Sleep is when testosterone is produced — it matters more than you think",
+    note: "Up to 70% of daily testosterone is produced during deep sleep. Less than 6 hours can cut your growth potential nearly in half.",
+    opts: ["Under 5 hours", "5 – 6 hours", "6 – 7 hours", "8 hours or more"],
+  },
+  {
+    kind: "q",
+    id: "exercise",
+    q: "How often do you exercise per week?",
+    hint: "Physical activity directly stimulates growth hormone production",
+    opts: ["Rarely or never", "Once a week", "2 – 3 times a week", "4 or more times a week"],
+  },
+  {
+    kind: "info",
+    id: "info2",
+    title: "Ejaculatory control is directly linked to pelvic floor muscle strength",
+    video: `${VID_CDN}/wp-content/uploads/2025/05/Assoalho-Pelvico-1.mp4`,
+    quote: "Strengthening these muscles allows better control of the ejaculatory reflex and increased blood retention.",
+  },
+  {
+    kind: "q",
+    id: "diet",
+    q: "How would you honestly describe your diet?",
+    hint: "Nutrition fuels tissue expansion at a cellular level",
+    opts: [
+      "Mostly takeaways and crisps",
+      "Half-and-half — depends on the day",
+      "Generally balanced meals",
+      "Clean, whole foods most of the time",
+    ],
+  },
+  {
+    kind: "q",
+    id: "tried",
+    q: "Have you ever tried a natural enhancement method before?",
+    hint: "This determines where we begin your protocol",
+    note: "Pumps and weights cause micro-injuries that block growth. Your protocol begins with a recovery phase if needed.",
+    opts: [
+      "No — never heard of one",
+      "Heard of it but never tried",
+      "Tried it but wasn't consistent",
+      "Yes — but saw little to no results",
+    ],
+  },
+  {
+    kind: "h",
+    id: "height",
+    q: "What's your height?",
+    hint: "Used to fine-tune your hormonal baseline",
+  },
 ]
 
-const benefitsList = [
-  "Penis maior e mais grosso", "Veias mais aparentes", "Erecoes mais rigidas", "Ajuda a endireitar a curvatura",
-  "Mais controle da ejaculacao", "Musculo PC forte e desenvolvido", "Metodo cientificamente comprovado",
-  "Ganhos rapidos e permanentes", "100% seguro, natural e garantido", "Garante mais prazer para as suas parceiras",
-  "Mais confianca, controle e prazer sexual", "30 dias de garantia", "Provado por mais de 80.000 homens",
-]
+const TOTAL_Q = STEPS.filter((s) => s.kind === "q").length
 
-const bonuses = [
-  { title: "Manual do Cafajeste Malicioso na Seducao", price: "R$129,00", image: "https://dotadomaximo.com.br/wp-content/uploads/2022/04/seja-malicioso-na-cama-pro-1.png" },
-  { title: "Psicologia Reversa na Persuasao p/ Mulheres", price: "R$97,00", image: "https://dotadomaximo.com.br/wp-content/uploads/2022/04/a-pscologia-reversa-capa-pro-1.png" },
-  { title: "Manual do Homem Moderno", price: "R$69,00", image: "https://dotadomaximo.com.br/wp-content/uploads/2022/04/manual-do-homem-moderno-pro-1.png" },
-  { title: "O Que Nao Fazer no Primeiro Encontro", price: "R$95,00", image: "https://dotadomaximo.com.br/wp-content/uploads/2022/04/o-que-nao-fazer-no-primeiro-encontro.png" },
-  { title: "Como Saber Se Ela Sente Desejo Por Mim", price: "R$59,00", image: "https://dotadomaximo.com.br/wp-content/uploads/2022/04/como-saber-se-ela-sente-desejo-por-mim-min.png" },
-  { title: "Controle Maximo - Ejaculacao Precoce", price: "R$197,00", image: "https://dotadomaximo.com.br/wp-content/uploads/2022/04/controle-maximo-mockup-min.png" },
-]
+// ─── Result Logic ─────────────────────────────────────────────────────────────
 
-const testimonials = [
-  { name: "Depoimento Luan", videoId: "519485244" },
-  { name: "Depoimento Thiago", videoId: "709902913" },
-  { name: "Depoimento Carlos", videoId: "519484866" },
-  { name: "Depoimento Gabriel", videoId: "699823785" },
-  { name: "Depoimento Nicolas", videoId: "519485341" },
-]
+const calcGain = (a: Record<number, string>): number => {
+  let g = 3.9
+  if (a[0]?.includes("18")) g += 1.1
+  else if (a[0]?.includes("26")) g += 0.7
+  else if (a[0]?.includes("36")) g += 0.4
+  if (a[2] === "Every single morning") g += 0.7
+  else if (a[2] === "Most mornings") g += 0.4
+  if (a[5]?.includes("4 or more")) g += 0.5
+  else if (a[5]?.includes("2 – 3")) g += 0.3
+  if (a[6]?.includes("Clean") || a[6]?.includes("balanced")) g += 0.4
+  if (a[4]?.includes("8 hours") || a[4]?.includes("6 – 7")) g += 0.3
+  return Math.min(7.5, Math.round(g * 10) / 10)
+}
 
-const faqs = [
-  { question: "Como funciona o metodo?", answer: "O metodo Dotado Maximo e um metodo 100% natural e seguro, aonde sao ensinado tecnicas e exercicios exclusivos para crescer e engrossar o penis, bem como dicas e taticas para controlar a ejaculacao e melhorar as erecoes. Voce devera praticar as tecnicas por uns 10 minutinhos por dia, podendo ser no horario do banho. Os primeiros resultados ja podem serem notados ja na segunda semana de pratica. Os resultados podem chegar em ate 6CM." },
-  { question: "Isso funcionara para mim?", answer: "Nossa taxa de sucesso e de 98%. Nossos clientes ficam muito satisfeito com os resultados que obtem. Nos temos total conviccao que se voce praticar os exercicios corretamente, tambem obtera resultados satisfatorios. E ainda oferecemos garantia de 30 dias. Caso nao obter resultados satisfatorios devolvemos seu dinheiro, sem perguntas." },
-  { question: "Essas tecnicas sao seguras?", answer: "Sim, elas sao apoiada e endossada pela comunidade medica, isso porque o processo nao e dolorido, nao causa complicacoes futuras e sao muito efetivas para o aumento peniano, embora muito desconhecidas pela maioria das pessoas, elas vem sendo a melhor forma para aumentar o tamanho e a grossura do penis" },
-  { question: "Existe algum tipo de garantia?", answer: "Sim, o tempo minimo para se obter resultados e de 2 semanas, caso nao perceba nenhuma evolucao nesse periodo e so solicitar o reembolso. Voce recebera no seu email um login e senha para logar na plataforma monetizze, e e la que tera a opcao de solicitar o reembolso." },
-]
+const baseSize = (a: Record<number, string>): number => {
+  if (a[3]?.includes("Under")) return 11
+  if (a[3]?.includes("12 – 14")) return 13
+  if (a[3]?.includes("14 – 16")) return 15
+  return 17
+}
 
-const mobileFeatures = [
-  "Acesso a videos profissionais de todo passo a passo",
-  "Acesso ao manual Dotado Maximo",
-  "Acesso a tabela de resultados",
-  "Acesso a tabela de rotina",
-  "Suporte via Email, WhatsApp e ligacao",
-  "Acesso com login e senha exclusivo",
-  "E muito mais...",
-]
+const fmt = (s: number) =>
+  `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`
 
-export default function HomePage() {
-  const [openFaq, setOpenFaq] = useState<number | null>(null)
-  const [showPopup, setShowPopup] = useState(false)
+// ─── Shared UI ────────────────────────────────────────────────────────────────
 
-  const scrollToOffer = () => {
-    document.getElementById("offer")?.scrollIntoView({ behavior: "smooth" })
+const Header = memo(function Header() {
+  return (
+    <header
+      className="py-5 px-4 text-center"
+      style={{ backgroundColor: "#003466", borderBottom: "1px solid rgba(255,255,255,0.08)" }}
+    >
+      <p
+        className="text-[10px] font-semibold tracking-[0.22em] uppercase mb-1"
+        style={{ color: "#669ef3" }}
+      >
+        Free Professional Consultation
+      </p>
+      <h1
+        className="text-[26px] sm:text-[32px] font-extrabold text-white uppercase leading-tight"
+        style={{ fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.5px" }}
+      >
+        Congolese Protocol
+      </h1>
+      <p
+        className="text-[10px] tracking-widest uppercase mt-1"
+        style={{ color: "#669ef3" }}
+      >
+        Natural Growth System
+      </p>
+    </header>
+  )
+})
+
+function CheckIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  )
+}
+
+function ShieldIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    </svg>
+  )
+}
+
+function LockIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  )
+}
+
+function StarIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  )
+}
+
+function LightbulbIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" />
+      <path d="M9 18h6" />
+      <path d="M10 22h4" />
+    </svg>
+  )
+}
+
+// ─── Quiz Screen ──────────────────────────────────────────────────────────────
+
+const ProgressBar = memo(function ProgressBar({ step }: { step: number }) {
+  const pct = Math.round((step / TOTAL_Q) * 100)
+  return (
+    <div className="px-4 pt-4 pb-3">
+      <div className="p-3 rounded-lg" style={{ backgroundColor: "#002855" }}>
+        <div className="flex justify-between text-[11px] mb-2 font-semibold" style={{ color: "#94a3b8" }}>
+          <span>Question {step} of {TOTAL_Q}</span>
+          <span>{pct}%</span>
+        </div>
+        <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: "#1e3a5f" }}>
+          <div
+            className="h-full rounded-full transition-all duration-500 ease-out"
+            style={{ width: `${pct}%`, background: "linear-gradient(90deg, #003466, #025fde)" }}
+          />
+        </div>
+      </div>
+    </div>
+  )
+})
+
+const OptionBtn = memo(function OptionBtn({
+  value, onSelect, index,
+}: {
+  value: string
+  onSelect: (v: string) => void
+  index: number
+}) {
+  const [selected, setSelected] = useState(false)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => () => {
+    if (timerRef.current) clearTimeout(timerRef.current)
+  }, [])
+
+  const handleClick = () => {
+    setSelected(true)
+    timerRef.current = setTimeout(() => onSelect(value), 350)
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 text-white py-12 md:py-16">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div className="text-center md:text-left">
-              <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
-                Descubra como os homens estao conseguindo um{" "}
-                <span className="text-cyan-400">PENIS MAIOR</span> e mais grosso de forma 100% natural e segura.
-              </h1>
-              <p className="text-gray-300 text-base md:text-lg">
-                Resultados visiveis a partir da segunda semana de pratica 100% natural, seguro e comprovado.
-              </p>
+    <button
+      onClick={handleClick}
+      disabled={selected}
+      data-selected={selected ? "true" : "false"}
+      className={`opt-btn animate-slide-up ${selected ? "animate-pulse-border" : ""}`}
+      style={{ animationDelay: `${index * 50}ms`, animationFillMode: "both" }}
+    >
+      <span className="leading-snug">{value}</span>
+      <span className="opt-radio">
+        {selected && (
+          <svg
+            viewBox="0 0 24 24" fill="none" stroke="#fff"
+            strokeWidth={3} strokeLinecap="round" strokeLinejoin="round"
+            className="w-3 h-3 animate-check-in"
+            aria-hidden="true"
+          >
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        )}
+      </span>
+    </button>
+  )
+})
+
+function HeightStep({
+  height, unit, feetVal, inchVal,
+  onHeight, onUnit, onFt, onIn, onContinue,
+}: {
+  height: number; unit: "cm" | "ft"; feetVal: number; inchVal: number
+  onHeight: (v: number) => void; onUnit: (u: "cm" | "ft") => void
+  onFt: (v: number) => void; onIn: (v: number) => void
+  onContinue: () => void
+}) {
+  const valid = unit === "cm" ? height >= 140 && height <= 225 : feetVal * 12 + inchVal >= 54
+
+  return (
+    <div className="space-y-5">
+      <div className="flex justify-center">
+        <div className="inline-flex p-1 gap-1" style={{ backgroundColor: "#f3f4f6", borderRadius: "6px" }}>
+          {(["cm", "ft"] as const).map((u) => (
+            <button
+              key={u}
+              onClick={() => onUnit(u)}
+              className="px-5 py-1.5 text-sm font-bold transition-all"
+              style={{
+                borderRadius: "4px",
+                backgroundColor: u === unit ? "#003466" : "transparent",
+                color: u === unit ? "#fff" : "#5e7d9f",
+              }}
+            >
+              {u === "cm" ? "cm" : "ft / in"}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div
+        className="p-6 text-center"
+        style={{ backgroundColor: "#f8faff", border: "1px solid #e5e7eb", borderRadius: "8px" }}
+      >
+        {unit === "cm" ? (
+          <>
+            <div
+              className="text-6xl font-extrabold tabular-nums"
+              style={{ color: "#003466", fontFamily: "'Montserrat', sans-serif" }}
+            >
+              {height}
             </div>
-            <div>
-              <p className="text-center text-gray-300 mb-4">Assista ao video agora</p>
-              <div className="rounded-xl overflow-hidden border-4 border-cyan-400 shadow-2xl">
-                <iframe
-                  src="https://player.vimeo.com/video/882563924?color&autopause=0&loop=0&muted=0&title=0&portrait=0&byline=0"
-                  allowFullScreen
-                  loading="lazy"
-                  width="100%"
-                  style={{ aspectRatio: "16/9" }}
-                  allow="autoplay; fullscreen"
+            <div className="text-sm mb-5" style={{ color: "#5e7d9f" }}>centimetres</div>
+            <input
+              type="range" min={140} max={225} value={height}
+              onChange={(e) => onHeight(+e.target.value)}
+              className="w-full cursor-pointer"
+              style={{ accentColor: "#003466" }}
+              aria-label="Height in centimetres"
+            />
+            <div className="flex justify-between text-xs mt-1.5" style={{ color: "#9ca3af" }}>
+              <span>140 cm</span><span>225 cm</span>
+            </div>
+          </>
+        ) : (
+          <>
+            <div
+              className="text-6xl font-extrabold tabular-nums"
+              style={{ color: "#003466", fontFamily: "'Montserrat', sans-serif" }}
+            >
+              {feetVal}&apos;{inchVal}&quot;
+            </div>
+            <div className="text-sm mb-5" style={{ color: "#5e7d9f" }}>{height} cm</div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <div className="text-xs mb-1 font-medium" style={{ color: "#5e7d9f" }}>Feet (4 – 7)</div>
+                <input
+                  type="range" min={4} max={7} value={feetVal}
+                  onChange={(e) => onFt(+e.target.value)}
+                  className="w-full cursor-pointer"
+                  style={{ accentColor: "#003466" }}
+                  aria-label="Height in feet"
                 />
               </div>
-              <button
-                onClick={scrollToOffer}
-                className="w-full mt-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-4 px-8 rounded-xl text-lg transition-all"
+              <div>
+                <div className="text-xs mb-1 font-medium" style={{ color: "#5e7d9f" }}>Inches (0 – 11)</div>
+                <input
+                  type="range" min={0} max={11} value={inchVal}
+                  onChange={(e) => onIn(+e.target.value)}
+                  className="w-full cursor-pointer"
+                  style={{ accentColor: "#003466" }}
+                  aria-label="Height in inches"
+                />
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+
+      <button
+        onClick={onContinue}
+        disabled={!valid}
+        className="cta-btn w-full py-4 font-extrabold text-[15px] uppercase tracking-wide"
+        style={{
+          borderRadius: "6px",
+          fontFamily: "'Montserrat', sans-serif",
+          letterSpacing: "0.5px",
+          ...(valid
+            ? { backgroundColor: "#004198", color: "#fff", cursor: "pointer" }
+            : { backgroundColor: "#e5e7eb", color: "#9ca3af", cursor: "not-allowed" }),
+        }}
+      >
+        Generate My Personalised Plan →
+      </button>
+    </div>
+  )
+}
+
+// ─── Loading Screen ───────────────────────────────────────────────────────────
+
+const ANALYSIS = [
+  "Tissue Expansion Capacity",
+  "Natural Growth Potential",
+  "Vascular Flow Index",
+  "Kegel Strength Baseline",
+  "Protocol Match Score",
+]
+
+function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => void }) {
+  const [slide, setSlide] = useState(0)
+  const [fadeSlide, setFadeSlide] = useState(false)
+
+  useEffect(() => {
+    let inner: ReturnType<typeof setTimeout> | null = null
+    const t = setInterval(() => {
+      setFadeSlide(true)
+      inner = setTimeout(() => {
+        setSlide((s) => (s + 1) % SLIDES.length)
+        setFadeSlide(false)
+      }, 400)
+    }, 3500)
+    return () => {
+      clearInterval(t)
+      if (inner) clearTimeout(inner)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (progress >= 100) {
+      const t = setTimeout(onDone, 700)
+      return () => clearTimeout(t)
+    }
+  }, [progress, onDone])
+
+  return (
+    <div className="min-h-screen" style={{ backgroundColor: "#003466", fontFamily: "'Roboto', sans-serif" }}>
+      <Header />
+      <div className="max-w-md mx-auto px-4 pt-6 pb-10 space-y-4">
+        <div className="bg-white p-6 animate-slide-up" style={{ borderRadius: "10px", boxShadow: "0 8px 32px rgba(0,0,0,0.18)" }}>
+          <h2
+            className="text-xl font-extrabold text-center mb-1"
+            style={{ color: "#003466", fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.5px" }}
+          >
+            Analysing Your Profile
+          </h2>
+          <p className="text-center text-sm mb-5" style={{ color: "#5e7d9f" }}>
+            Building your personalised protocol…
+          </p>
+
+          <div
+            className="relative h-64 overflow-hidden mb-6"
+            style={{ borderRadius: "8px", backgroundColor: "#f3f4f6" }}
+          >
+            {SLIDES.map((s, i) => (
+              <div
+                key={i}
+                className="absolute inset-0 transition-all duration-500"
+                style={{
+                  opacity: i === slide ? (fadeSlide ? 0 : 1) : 0,
+                  transform: i === slide ? (fadeSlide ? "scale(1.05)" : "scale(1)") : "scale(0.95)",
+                }}
               >
-                QUERO RESULTADOS AGORA
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Trust */}
-      <section className="py-6 bg-gradient-to-br from-gray-900 to-slate-800">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div className="text-gray-200 text-sm">
-              <span className="text-cyan-400 text-xl">&#10004;</span>
-              <p>Garantia total de <strong>30 dias</strong></p>
-            </div>
-            <div className="text-gray-200 text-sm">
-              <span className="text-cyan-400 text-xl">&#10004;</span>
-              <p>Mais de <strong>80 mil homens</strong></p>
-            </div>
-            <div className="text-gray-200 text-sm">
-              <span className="text-cyan-400 text-xl">&#10004;</span>
-              <p>Resultados <strong>rapidos</strong></p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Natural */}
-      <section className="py-8 bg-white">
-        <div className="container mx-auto px-4 max-w-4xl text-center">
-          <p className="text-lg md:text-xl text-gray-700">
-            100% natural, seguro e comprovado. Sem cirurgias, sem aparelhos e sem medicamentos. Apenas tecnicas reais que funcionam.
-          </p>
-        </div>
-      </section>
-
-      {/* Benefits Grid */}
-      <section className="py-8 bg-gradient-to-br from-blue-50 to-cyan-50">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {benefits.map((b, i) => (
-              <div key={i} className="bg-white p-4 md:p-6 rounded-xl shadow-lg text-center border-t-4 border-blue-400">
-                <img src={b.image || "/placeholder.svg"} alt={b.title} className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 object-contain" />
-                <h3 className="text-sm md:text-base font-bold text-gray-900 mb-2">{b.title}</h3>
-                <p className="text-xs md:text-sm text-gray-600">{b.description}</p>
+                <img
+                  src={s.src}
+                  alt={s.label}
+                  width={400}
+                  height={256}
+                  decoding="async"
+                  loading={i === 0 ? "eager" : "lazy"}
+                  fetchPriority={i === 0 ? "high" : "auto"}
+                  className="w-full h-full object-cover"
+                />
+                <div
+                  className="absolute inset-x-0 bottom-0 p-3"
+                  style={{ background: "linear-gradient(to top, rgba(0,0,0,0.85), transparent)" }}
+                >
+                  <p className="text-white text-sm font-bold text-center">{s.label}</p>
+                </div>
               </div>
             ))}
+            <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex gap-2">
+              {SLIDES.map((_, i) => (
+                <div
+                  key={i}
+                  className="w-2 h-2 rounded-full transition-all duration-300"
+                  style={{
+                    backgroundColor: i === slide ? "#fff" : "rgba(255,255,255,0.4)",
+                    transform: i === slide ? "scale(1.4)" : "scale(1)",
+                    boxShadow: i === slide ? "0 0 8px rgba(255,255,255,0.6)" : "none",
+                  }}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
 
-      {/* Benefits List */}
-      <section className="py-8 bg-white">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-4">Beneficios do Dotado Maximo</h2>
-          <p className="text-center text-gray-600 mb-6">
-            Com o metodo Dotado Maximo voce obtera <span className="text-blue-600 font-bold">varios beneficios</span> em um unico lugar!
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {benefitsList.map((b, i) => (
-              <div key={i} className="flex items-center gap-2 p-3 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border-l-4 border-blue-600">
-                <span className="text-blue-600">&#10004;</span>
-                <p className="text-sm text-gray-700">{b}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Mobile Access */}
-      <section className="py-8 bg-gradient-to-br from-blue-50 to-cyan-50">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <div className="grid md:grid-cols-2 gap-6 items-center">
-            <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Acesse tudo pelo seu celular</h2>
-              <div className="space-y-2">
-                {mobileFeatures.map((f, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <span className="text-blue-600">&#10004;</span>
-                    <p className="text-sm text-gray-700">{f}</p>
+          <div className="space-y-4">
+            {ANALYSIS.map((label, i) => {
+              const thresh = i * 20
+              const done = progress >= thresh + 20
+              const active = !done && progress >= thresh
+              const w = done ? 100 : active ? Math.round(((progress - thresh) / 20) * 100) : 0
+              return (
+                <div key={label} className="animate-slide-up" style={{ animationDelay: `${i * 100}ms` }}>
+                  <div className="flex justify-between items-center mb-1.5">
+                    <span className="text-sm font-semibold" style={{ color: "#003466" }}>{label}</span>
+                    <span
+                      className="text-xs font-bold transition-all duration-300"
+                      style={{ color: done ? "#36c57c" : active ? "#f59e0b" : "#d1d5db" }}
+                    >
+                      {done ? "✓ Done" : active ? "Running…" : "Pending"}
+                    </span>
                   </div>
-                ))}
-              </div>
-              <button
-                onClick={scrollToOffer}
-                className="mt-4 w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-3 px-6 rounded-full text-base transition-all"
-              >
-                QUERO ACESSAR AGORA
-              </button>
+                  <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: "#f3f4f6" }}>
+                    <div
+                      className={`h-full rounded-full ${active ? "animate-progress-glow" : ""}`}
+                      style={{
+                        width: `${w}%`,
+                        backgroundColor: done ? "#36c57c" : "#004198",
+                        transition: "width 0.5s ease-out",
+                      }}
+                    />
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          <div className="mt-8 text-center">
+            <div
+              className="text-6xl font-extrabold tabular-nums transition-all duration-300"
+              style={{ color: "#003466", fontFamily: "'Montserrat', sans-serif" }}
+            >
+              {Math.round(progress)}%
             </div>
-            <div>
-              <img src="/images/design-mode/dmartenova-min.png" alt="Acesso no celular" className="w-full rounded-xl shadow-lg" />
+            <div className="text-sm mt-1" style={{ color: "#5e7d9f" }}>Analysis in progress</div>
+            <div className="mt-4 h-2.5 rounded-full overflow-hidden mx-8" style={{ backgroundColor: "#e5e7eb" }}>
+              <div
+                className="h-full rounded-full transition-all duration-500 relative"
+                style={{
+                  width: `${progress}%`,
+                  background: `linear-gradient(90deg, #003466 0%, #003466 ${Math.max(0, 100 - (15 / progress * 100))}%, #36c57c 100%)`,
+                }}
+              />
             </div>
           </div>
         </div>
-      </section>
 
-      {/* Bonuses */}
-      <section className="py-8 bg-white">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-2">Voce ira ganhar 6 bonus</h2>
-          <p className="text-center text-gray-600 mb-6">se comprar ainda HOJE</p>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {bonuses.map((b, i) => (
-              <div key={i} className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-                <img src={b.image || "/placeholder.svg"} alt={b.title} className="w-full h-32 md:h-40 object-cover" />
-                <div className="p-3">
-                  <h3 className="text-xs md:text-sm font-bold text-gray-900 mb-2 line-clamp-2">{b.title}</h3>
-                  <p className="text-xs text-center">
-                    <span className="text-blue-600 line-through">de {b.price}</span>
-                    <span className="text-green-600 font-bold block">por R$00,00</span>
+        <div className="flex items-center justify-center gap-2 text-xs animate-slide-up" style={{ color: "#669ef3", animationDelay: "200ms" }}>
+          <LockIcon className="w-3 h-3" />
+          Your data is 100% private and never shared
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Results Screen ───────────────────────────────────────────────────────────
+
+const TESTIMONIALS = [
+  {
+    name: "Ciarán M.", location: "Cork", age: 34, gain: "+3.7cm",
+    text: "I congratulate you for what you're offering. My insecurity had me locked away. I only went out to earn money, which I then spent on things that didn't work — pills, pumps and weights. Putting your method into practice was like coming back to life. You explain everything so simply and clearly...",
+    avatar: `${AVT_CDN}/t-carlos-MFpfh0uYLjKM4F1SPcbnuQKjCo44EA.png`,
+  },
+  {
+    name: "Darragh K.", location: "Dublin", age: 38, gain: "+3.7cm",
+    text: "I'm so grateful to you. But my wife is even more grateful! You saved my marriage. The change was incredible, very noticeable and faster than I thought. From 15 to 18.7 centimetres, and the girth from 11 to 12.8 centimetres. My wife is having the time of her life. And thanks to you, it's with me! You truly freed me from a huge problem. Thanks mate!",
+    avatar: `${AVT_CDN}/t-roberto-2Rp5y8EWVWsiZMO2qU5P11CwfCjyiI.png`,
+  },
+  {
+    name: "Seán F.", location: "Galway", age: 42, gain: "+4.2cm",
+    text: "It was a rough few months. My wife Paula left me after 7 years of marriage. I don't blame her — we'd gone over a year without a proper intimate relationship... Being single again with zero confidence was pushing me into depression. I tried many things out there, but only got pain and wasted money. A friend recommended your system and I had doubts, but with nothing to lose I followed your instructions... Now I'm not only bigger, but harder and lasting longer. In 2 months I've been with 5 new women, and each one had explosive experiences! Apparently my ex found out and now wants me back...",
+    avatar: `${AVT_CDN}/t-jorge-378PxPddkBoypl3foZkPdOHRRwiEqb.png`,
+  },
+]
+
+function ResultsScreen({
+  answers, onCTA,
+}: {
+  answers: Record<number, string>; height: number; onCTA: () => void
+}) {
+  const gain = calcGain(answers)
+  const current = baseSize(answers)
+  const target = +(current + gain).toFixed(1)
+  const [secs, setSecs] = useState(14 * 60 + 59)
+  const [spots, setSpots] = useState(3)
+
+  const protocolName =
+    answers[0]?.includes("51") ? "Revitalise Protocol" :
+    answers[0]?.includes("36") ? "Peak Performance Protocol" :
+    answers[0]?.includes("26") ? "Prime Growth Protocol" :
+    "Rapid Growth Protocol"
+
+  const ageLabel = answers[0]?.match(/\d+\s*[–-]\s*\d+/)?.[0] ?? "your age group"
+
+  useEffect(() => {
+    setSpots(Math.floor(Math.random() * 2) + 2)
+    window.scrollTo({ top: 0, behavior: "auto" })
+  }, [])
+
+  useEffect(() => {
+    const t = setInterval(() => setSecs((s) => Math.max(0, s - 1)), 1000)
+    return () => clearInterval(t)
+  }, [])
+
+  useEffect(() => {
+    if (spots < 1) return
+    const t = setTimeout(() => { if (spots > 1) setSpots((s) => s - 1) }, 50000)
+    return () => clearTimeout(t)
+  }, [spots])
+
+  return (
+    <div className="min-h-screen pb-16" style={{ backgroundColor: "#f0f4ff", fontFamily: "'Roboto', sans-serif" }}>
+      <div className="text-white text-center py-2.5 px-4" style={{ backgroundColor: "#36c57c" }}>
+        <p className="text-sm font-bold" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+          Your personalised plan is ready — {spots} spot{spots !== 1 ? "s" : ""} remaining today
+        </p>
+      </div>
+
+      <Header />
+
+      <main className="max-w-md mx-auto px-4 pt-5 space-y-4">
+        {/* Countdown */}
+        <div
+          className="p-4 flex items-center justify-between"
+          style={{ backgroundColor: "#fffbeb", border: "1px solid #fcd34d", borderRadius: "8px" }}
+        >
+          <div>
+            <div className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "#d97706" }}>
+              Reserved for you
+            </div>
+            <div className="text-sm font-medium" style={{ color: "#92400e" }}>Your plan expires in</div>
+          </div>
+          <div
+            className="text-3xl font-extrabold tabular-nums"
+            style={{ color: "#b45309", fontFamily: "'Montserrat', sans-serif" }}
+          >
+            {fmt(secs)}
+          </div>
+        </div>
+
+        {/* Main card */}
+        <div className="bg-white overflow-hidden" style={{ borderRadius: "10px", boxShadow: "0 4px 20px rgba(0,0,0,0.10)" }}>
+          <div
+            className="px-6 py-6 text-white text-center"
+            style={{ background: "linear-gradient(135deg, #003466 0%, #004198 100%)" }}
+          >
+            <div
+              className="text-[10px] font-semibold tracking-[0.2em] uppercase mb-1"
+              style={{ color: "#669ef3" }}
+            >
+              Your Personalised Plan
+            </div>
+            <div
+              className="text-[26px] font-extrabold"
+              style={{ fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.5px" }}
+            >
+              {protocolName}
+            </div>
+            <div className="text-sm mt-0.5" style={{ color: "#669ef3" }}>
+              Congolese Protocol + Kegel Training · Calibrated for {ageLabel}
+            </div>
+          </div>
+
+          <div className="p-6 space-y-5">
+            {/* Big number */}
+            <div
+              className="p-5 text-center"
+              style={{
+                background: "linear-gradient(135deg, #f0f5ff, #e8eeff)",
+                border: "1px solid #c7d2fe",
+                borderRadius: "8px",
+              }}
+            >
+              <div className="text-sm mb-1" style={{ color: "#5e7d9f" }}>Your projected gain in 45 days</div>
+              <div
+                className="text-7xl font-extrabold leading-none"
+                style={{ color: "#003466", fontFamily: "'Montserrat', sans-serif" }}
+              >
+                +{gain}<span className="text-4xl">cm</span>
+              </div>
+              <div className="text-sm mt-1.5" style={{ color: "#5e7d9f" }}>
+                Based on your age, health profile and hormone baseline
+              </div>
+            </div>
+
+            {/* Size visualiser */}
+            <div>
+              <div className="flex justify-between text-xs font-bold uppercase tracking-wide mb-2" style={{ color: "#5e7d9f" }}>
+                <span>Now</span><span>Day 45</span>
+              </div>
+              <div className="relative h-6 rounded-full overflow-hidden" style={{ backgroundColor: "#f3f4f6" }}>
+                <div
+                  className="absolute left-0 top-0 h-full rounded-full"
+                  style={{ width: `${(current / 22) * 100}%`, backgroundColor: "#bfdbfe" }}
+                />
+                <div
+                  className="absolute left-0 top-0 h-full rounded-full"
+                  style={{ width: `${(target / 22) * 100}%`, background: "linear-gradient(to right, #003466, #025fde)" }}
+                />
+                <div className="absolute inset-0 flex items-center justify-center text-white text-xs font-extrabold">
+                  {current}cm → {target}cm
+                </div>
+              </div>
+            </div>
+
+            {/* Timeline milestones */}
+            <div className="grid grid-cols-3 gap-2.5">
+              {[
+                { t: "Week 2", v: `+${+(gain * 0.28).toFixed(1)}cm`, n: "First changes" },
+                { t: "Day 21", v: `+${+(gain * 0.58).toFixed(1)}cm`, n: "Visible growth" },
+                { t: "Day 45", v: `+${gain}cm`, n: "Full result" },
+              ].map((m) => (
+                <div
+                  key={m.t}
+                  className="p-3 text-center"
+                  style={{ backgroundColor: "#f8faff", border: "1px solid #e5e7eb", borderRadius: "8px" }}
+                >
+                  <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: "#5e7d9f" }}>{m.t}</div>
+                  <div
+                    className="text-lg font-extrabold"
+                    style={{ color: "#003466", fontFamily: "'Montserrat', sans-serif" }}
+                  >
+                    {m.v}
+                  </div>
+                  <div className="text-[10px]" style={{ color: "#5e7d9f" }}>{m.n}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Benefits */}
+            <div className="space-y-2.5 pt-1">
+              {[
+                "Increase length and girth naturally — zero devices",
+                "Stronger, longer-lasting erections",
+                "Advanced Kegel techniques for stamina and control",
+                "First visible results within 14 days",
+                "Improved confidence and bedroom performance",
+                "No pills, no pumps, no side effects",
+                "Discreet — everything done at home",
+              ].map((b) => (
+                <div key={b} className="flex items-start gap-3">
+                  <div
+                    className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+                    style={{ backgroundColor: "#dcfce7", color: "#235347" }}
+                  >
+                    <CheckIcon className="w-3 h-3" />
+                  </div>
+                  <span className="text-[14px] leading-snug" style={{ color: "#5e7d9f" }}>{b}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Testimonials */}
+        <div>
+          <div
+            className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-center mb-3"
+            style={{ color: "#5e7d9f", fontFamily: "'Montserrat', sans-serif" }}
+          >
+            Real results from men in Ireland
+          </div>
+          <div className="space-y-3">
+            {TESTIMONIALS.map((t, idx) => (
+              <div
+                key={t.name}
+                className="bg-white p-4 animate-slide-up"
+                style={{
+                  borderRadius: "8px",
+                  border: "1px solid #e5e7eb",
+                  boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+                  animationDelay: `${idx * 100}ms`,
+                }}
+              >
+                <div className="flex items-start gap-3">
+                  <img
+                    src={t.avatar}
+                    alt={`${t.name} avatar`}
+                    width={56}
+                    height={56}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-14 h-14 rounded-full object-cover flex-shrink-0"
+                    style={{ border: "2px solid #e5e7eb" }}
+                  />
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-bold" style={{ color: "#003466" }}>
+                        {t.name}, {t.age}
+                      </span>
+                      <span
+                        className="text-xs font-extrabold px-2 py-0.5"
+                        style={{
+                          color: "#235347",
+                          backgroundColor: "#f0fdf4",
+                          border: "1px solid #65bd8e",
+                          borderRadius: "4px",
+                          fontFamily: "'Montserrat', sans-serif",
+                        }}
+                      >
+                        {t.gain} verified
+                      </span>
+                    </div>
+                    <div className="flex gap-0.5 mb-2">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <StarIcon key={i} className="w-3.5 h-3.5 text-amber-400" />
+                      ))}
+                      <span className="text-xs ml-1" style={{ color: "#9ca3af" }}>{t.location}</span>
+                    </div>
+                    <p className="text-sm leading-relaxed" style={{ color: "#5e7d9f" }}>&ldquo;{t.text}&rdquo;</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Guarantee */}
+        <div
+          className="p-5 flex items-center gap-4"
+          style={{ backgroundColor: "#003466", borderRadius: "8px" }}
+        >
+          <span style={{ color: "#669ef3" }}><ShieldIcon className="w-12 h-12 flex-shrink-0" /></span>
+          <div>
+            <div
+              className="text-white font-extrabold text-base"
+              style={{ fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.5px" }}
+            >
+              30-Day Money-Back Guarantee
+            </div>
+            <div className="text-sm mt-0.5" style={{ color: "#669ef3" }}>
+              Zero results in 30 days? Full refund. No questions asked.
+            </div>
+          </div>
+        </div>
+
+        {/* CTA block */}
+        <div className="space-y-3 pt-1">
+          <button
+            onClick={onCTA}
+            className="cta-btn w-full text-white font-extrabold py-5 text-[15px] uppercase tracking-wide shadow-xl"
+            style={{
+              background: "linear-gradient(135deg, #36c57c, #2aaa68)",
+              borderRadius: "6px",
+              fontFamily: "'Montserrat', sans-serif",
+              letterSpacing: "0.5px",
+            }}
+          >
+            Claim My Plan Now →
+          </button>
+
+          <div className="flex items-center justify-center gap-3 text-xs flex-wrap" style={{ color: "#5e7d9f" }}>
+            <span className="flex items-center gap-1"><LockIcon className="w-3 h-3" /> Secure checkout</span>
+            <span>·</span><span>Discreet billing</span>
+            <span>·</span><span>Ships to Ireland</span>
+            <span>·</span><span>EUR pricing</span>
+          </div>
+
+          <div
+            className="p-3.5 text-center"
+            style={{ backgroundColor: "#fffbeb", border: "1px solid #fcd34d", borderRadius: "8px" }}
+          >
+            <p className="text-sm font-bold" style={{ color: "#b45309" }}>
+              ⚡ {spots} spot{spots !== 1 ? "s" : ""} left at this price — expires in {fmt(secs)}
+            </p>
+          </div>
+        </div>
+      </main>
+    </div>
+  )
+}
+
+// ─── Main ─────────────────────────────────────────────────────────────────────
+
+export default function IrelandQuiz() {
+  useFbPixel()
+  usePrefetchSlides()
+
+  const [s, setS] = useState<State>({
+    screen: "quiz",
+    stepIndex: 0,
+    answers: {},
+    loadProgress: 0,
+    height: 175,
+    heightUnit: "cm",
+    feetVal: 5,
+    inchVal: 9,
+  })
+
+  const loadInterval = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  const set = useCallback(<K extends keyof State>(k: K, v: State[K]) =>
+    setS((p) => ({ ...p, [k]: v })), [])
+
+  const merge = useCallback((u: Partial<State>) =>
+    setS((p) => ({ ...p, ...u })), [])
+
+  const startLoad = useCallback(() => {
+    if (loadInterval.current) clearInterval(loadInterval.current)
+    let prog = 4
+    merge({ screen: "loading", loadProgress: 4 })
+    loadInterval.current = setInterval(() => {
+      prog += 0.7
+      if (prog >= 100) {
+        if (loadInterval.current) clearInterval(loadInterval.current)
+        merge({ loadProgress: 100 })
+      } else {
+        set("loadProgress", prog)
+      }
+    }, 220)
+  }, [merge, set])
+
+  useEffect(() => () => {
+    if (loadInterval.current) clearInterval(loadInterval.current)
+  }, [])
+
+  const answer = useCallback((val: string) => {
+    setS((prev) => {
+      const answers = { ...prev.answers, [prev.stepIndex]: val }
+      const next = prev.stepIndex + 1
+      if (next >= STEPS.length) {
+        // Trigger load on next tick to avoid setState-during-render
+        setTimeout(startLoad, 0)
+        return { ...prev, answers }
+      }
+      return { ...prev, answers, stepIndex: next }
+    })
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  }, [startLoad])
+
+  const back = useCallback(() => {
+    setS((p) => p.stepIndex > 0 ? { ...p, stepIndex: p.stepIndex - 1 } : p)
+  }, [])
+
+  const nextStep = useCallback(() => {
+    setS((prev) => {
+      const next = prev.stepIndex + 1
+      if (next >= STEPS.length) {
+        setTimeout(startLoad, 0)
+        return prev
+      }
+      return { ...prev, stepIndex: next }
+    })
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  }, [startLoad])
+
+  const updateFt = useCallback((v: number) => {
+    setS((p) => ({ ...p, feetVal: v, height: Math.round((v * 12 + p.inchVal) * 2.54) }))
+  }, [])
+
+  const updateIn = useCallback((v: number) => {
+    setS((p) => ({ ...p, inchVal: v, height: Math.round((p.feetVal * 12 + v) * 2.54) }))
+  }, [])
+
+  const updateUnit = useCallback((u: "cm" | "ft") => {
+    merge({ heightUnit: u })
+  }, [merge])
+
+  // ─── Render ───────────────────────────────────────────────────────────────
+
+  if (s.screen === "loading") {
+    return (
+      <>
+        <ResourceHints />
+        <GlobalStyles />
+        <LoadingScreen progress={s.loadProgress} onDone={() => merge({ screen: "results" })} />
+      </>
+    )
+  }
+
+  if (s.screen === "results") {
+    return (
+      <>
+        <ResourceHints />
+        <GlobalStyles />
+        <ResultsScreen
+          answers={s.answers}
+          height={s.height}
+          onCTA={() => window.open("https://pay.hotmart.com/U104868943B?off=n8cjjaa1&checkoutMode=10", "_blank")}
+        />
+      </>
+    )
+  }
+
+  const step = STEPS[s.stepIndex]
+  const isHeight = step.kind === "h"
+  const isInfo = step.kind === "info"
+  const qNum = STEPS.slice(0, s.stepIndex + 1).filter((x) => x.kind === "q").length
+
+  // Info screen with video
+  if (isInfo) {
+    return (
+      <>
+        <ResourceHints />
+        <GlobalStyles />
+        <div className="min-h-screen" style={{ backgroundColor: "#003466", fontFamily: "'Roboto', sans-serif" }}>
+          <Header />
+          <div className="max-w-md mx-auto">
+            <ProgressBar step={qNum} />
+            <div className="px-4 py-4 pb-8">
+              <div
+                key={s.stepIndex}
+                className="bg-white p-6 animate-slide-up space-y-5"
+                style={{ borderRadius: "10px", boxShadow: "0 8px 32px rgba(0,0,0,0.18)" }}
+              >
+                <div
+                  className="text-[10px] font-extrabold uppercase tracking-[0.22em] mb-1"
+                  style={{ color: "#d1d5db", fontFamily: "'Montserrat', sans-serif" }}
+                >
+                  Did you know?
+                </div>
+                <h2
+                  className="text-xl sm:text-[22px] font-extrabold leading-tight"
+                  style={{ color: "#003466", fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.5px" }}
+                >
+                  {step.title}
+                </h2>
+                <div
+                  className="w-full overflow-hidden"
+                  style={{ borderRadius: "16px", border: "1px solid #e5e7eb", aspectRatio: "16 / 9", backgroundColor: "#f3f4f6" }}
+                >
+                  <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    preload="metadata"
+                    className="w-full h-full object-cover block"
+                  >
+                    <source src={step.video} type="video/mp4" />
+                  </video>
+                </div>
+                <div
+                  className="p-4"
+                  style={{ backgroundColor: "#f8fafc", borderRadius: "12px", border: "1px solid #f1f5f9" }}
+                >
+                  <p className="text-sm italic" style={{ color: "#64748b" }}>
+                    &ldquo;{step.quote}&rdquo;
                   </p>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Offer */}
-      <section id="offer" className="py-8 bg-white">
-        <div className="container mx-auto px-4 max-w-4xl text-center">
-          <h2 className="text-2xl md:text-4xl font-bold mb-4 text-gray-900">
-            APENAS 36% DOS HOMENS CONSEGUEM FAZER AS MULHERES GOZAREM!
-          </h2>
-          <p className="text-gray-600 mb-6">
-            Sua compra e <span className="text-blue-600 font-bold">100% segura</span> e discreta!
-          </p>
-
-          <div className="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-2xl p-4 md:p-6">
-            <div className="grid md:grid-cols-2 gap-4">
-              {/* Basic */}
-              <div className="bg-white rounded-xl p-4 shadow-lg">
-                <h3 className="text-lg font-bold text-gray-900 mb-3">Plano Basico</h3>
-                <p className="text-4xl font-extrabold text-red-500 mb-1">R$9,90</p>
-                <p className="text-gray-600 text-sm mb-4">Pagamento unico</p>
-                <div className="space-y-2 mb-4 p-3 bg-gray-100 rounded-lg text-left text-sm">
-                  <p><span className="text-cyan-500">&#10004;</span> Acesso ao protocolo basico</p>
-                  <p><span className="text-cyan-500">&#10004;</span> Tecnicas de jelq</p>
-                  <p><span className="text-cyan-500">&#10004;</span> Exercicios de aquecimento</p>
-                  <p><span className="text-cyan-500">&#10004;</span> Garantia de 30 dias</p>
-                </div>
                 <button
-                  onClick={() => setShowPopup(true)}
-                  className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 rounded-xl transition-all"
+                  onClick={nextStep}
+                  className="cta-btn w-full py-4 font-extrabold text-[15px] uppercase tracking-wide flex items-center justify-center gap-2"
+                  style={{
+                    borderRadius: "6px",
+                    fontFamily: "'Montserrat', sans-serif",
+                    backgroundColor: "#004198",
+                    color: "#fff",
+                  }}
                 >
-                  ESCOLHER PLANO BASICO
+                  Got it! <span>→</span>
                 </button>
-              </div>
-
-              {/* Premium */}
-              <div className="relative bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl p-4 shadow-lg text-white">
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-cyan-400 text-gray-900 px-3 py-1 rounded-full text-xs font-bold">
-                  MAIS ESCOLHIDO
-                </div>
-                <h3 className="text-lg font-bold mb-3 mt-2">Acesso Vitalicio</h3>
-                <p className="text-gray-300 line-through text-sm">de R$97,00</p>
-                <p className="text-4xl font-extrabold text-red-500 mb-1">R$39,90</p>
-                <p className="text-gray-300 text-sm mb-4">Pagamento unico</p>
-                <div className="space-y-2 mb-4 p-3 bg-slate-600/50 rounded-lg text-left text-sm">
-                  <p><span className="text-cyan-400">&#10004;</span> Tudo do plano basico +</p>
-                  <p><span className="text-cyan-400">&#10004;</span> Protocolo completo avancado</p>
-                  <p><span className="text-cyan-400">&#10004;</span> Tecnicas de engrossamento</p>
-                  <p><span className="text-cyan-400">&#10004;</span> 6 Bonus exclusivos</p>
-                  <p><span className="text-cyan-400">&#10004;</span> Suporte prioritario</p>
-                  <p><span className="text-cyan-400">&#10004;</span> Atualizacoes vitalicias</p>
-                </div>
-                <a
-                  href="https://pay.wiapy.com/tG-O3lZ1e"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 rounded-xl transition-all block text-center"
-                >
-                  GARANTIR ACESSO VITALICIO
-                </a>
+                {s.stepIndex > 0 && (
+                  <button
+                    onClick={back}
+                    className="text-sm flex items-center gap-1 transition-opacity hover:opacity-70"
+                    style={{ color: "#5e7d9f" }}
+                  >
+                    ← Previous
+                  </button>
+                )}
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </>
+    )
+  }
 
-      {/* Popup */}
-      {showPopup && (
-        <div 
-          className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"
-          onClick={() => setShowPopup(false)}
-        >
-          <div 
-            className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="text-center mb-4">
-              <span className="inline-block bg-red-500 text-white px-4 py-2 rounded-full text-xs font-bold">
-                OFERTA ESPECIAL DESBLOQUEADA!
-              </span>
+  return (
+    <>
+      <ResourceHints />
+      <GlobalStyles />
+      <div className="min-h-screen" style={{ backgroundColor: "#003466", fontFamily: "'Roboto', sans-serif" }}>
+        <Header />
+
+        <div className="max-w-md mx-auto">
+          {!isHeight && <ProgressBar step={qNum} />}
+
+          <div className="px-4 py-4 pb-8">
+            <div
+              key={s.stepIndex}
+              className="bg-white p-6 animate-slide-up"
+              style={{ borderRadius: "10px", boxShadow: "0 8px 32px rgba(0,0,0,0.18)" }}
+            >
+              <div
+                className="text-[10px] font-extrabold uppercase tracking-[0.22em] mb-3"
+                style={{ color: "#d1d5db", fontFamily: "'Montserrat', sans-serif" }}
+              >
+                {isHeight ? "Your Details" : `Question ${qNum} of ${TOTAL_Q}`}
+              </div>
+
+              <h2
+                className="text-xl sm:text-[22px] font-extrabold leading-tight mb-1"
+                style={{ color: "#003466", fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.5px" }}
+              >
+                {step.q}
+              </h2>
+              <p className="text-sm mb-5" style={{ color: "#5e7d9f" }}>{step.hint}</p>
+
+              {isHeight ? (
+                <HeightStep
+                  height={s.height} unit={s.heightUnit}
+                  feetVal={s.feetVal} inchVal={s.inchVal}
+                  onHeight={(v) => set("height", v)}
+                  onUnit={updateUnit}
+                  onFt={updateFt}
+                  onIn={updateIn}
+                  onContinue={startLoad}
+                />
+              ) : (
+                <>
+                  <div className="space-y-2.5">
+                    {step.kind === "q" && step.opts.map((opt, idx) => (
+                      <OptionBtn key={opt} value={opt} onSelect={answer} index={idx} />
+                    ))}
+                  </div>
+
+                  {step.kind === "q" && step.note && (
+                    <div
+                      className="mt-5 p-4 flex gap-3 items-start"
+                      style={{ backgroundColor: "#f8fafc", borderRadius: "10px", border: "1px solid #f1f5f9" }}
+                    >
+                      <div
+                        className="p-1.5 flex-shrink-0"
+                        style={{ backgroundColor: "#fff", color: "#025fde", borderRadius: "8px", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}
+                      >
+                        <LightbulbIcon className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium leading-relaxed" style={{ color: "#64748b" }}>
+                          {step.note}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {s.stepIndex > 0 && (
+                <button
+                  onClick={back}
+                  className="mt-5 text-sm flex items-center gap-1 transition-opacity hover:opacity-70"
+                  style={{ color: "#5e7d9f" }}
+                >
+                  ← Previous question
+                </button>
+              )}
             </div>
-            <p className="text-center text-gray-700 text-sm mb-4">
-              VOCE LIBEROU UM DESCONTO DE<br />
-              <span className="text-red-600 font-bold">50% PARA LEVAR O PLANO COMPLETO!</span>
-            </p>
-            <p className="text-5xl font-extrabold text-red-500 text-center mb-2">R$19,90</p>
-            <p className="text-gray-700 text-sm text-center mb-4">ou 3x de R$6,63</p>
-            <a
-              href="https://pay.wiapy.com/C0AgUuvhr"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white font-bold py-3 rounded-xl block text-center mb-2"
+          </div>
+
+          <div className="px-4 pb-8">
+            <div
+              className="p-3.5 flex items-center justify-center gap-2.5"
+              style={{ backgroundColor: "#002855", borderRadius: "8px" }}
             >
-              APROVEITAR DESCONTO!
-            </a>
-            <button
-              onClick={() => {
-                window.open("https://pay.wiapy.com/aInCpWAVv", "_blank")
-                setShowPopup(false)
-              }}
-              className="w-full bg-gray-700 text-white font-medium py-2.5 rounded-xl"
-            >
-              Seguir com plano basico
-            </button>
-            <div className="text-center bg-red-50 rounded-lg p-3 border border-red-200 mt-4">
-              <p className="text-red-600 font-semibold text-xs leading-snug">
-                VOCE VAI RECEBER TODOS OS BONUS DO<br />
-                Dotado Maximo, ATUALIZACOES E<br />
-                ACESSO VITALICIO. APROVEITE!
+              <span style={{ color: "#669ef3" }}><LockIcon className="w-4 h-4" /></span>
+              <p className="text-xs font-semibold" style={{ color: "#669ef3" }}>
+                Your answers are 100% private — never shared or sold
               </p>
             </div>
           </div>
         </div>
-      )}
-
-      {/* Testimonials */}
-      <section className="py-8 bg-white">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-4">
-            Milhares de clientes satisfeitos com o metodo!
-          </h2>
-          <p className="text-center text-gray-600 mb-2">Ja transformamos a vida sexual de mais de</p>
-          <p className="text-center text-4xl font-bold text-cyan-500 mb-8">80 mil homens</p>
-          <div className="grid md:grid-cols-2 gap-6">
-            {testimonials.slice(0, 4).map((t, i) => (
-              <div key={i}>
-                <p className="text-center text-white bg-gray-900 py-2 rounded-lg text-sm mb-2">{t.name}</p>
-                <iframe
-                  src={`https://player.vimeo.com/video/${t.videoId}?color&autopause=0&loop=0&muted=0&title=0&portrait=0&byline=0`}
-                  allowFullScreen
-                  loading="lazy"
-                  width="100%"
-                  style={{ aspectRatio: "16/9" }}
-                  className="rounded-xl shadow-lg"
-                />
-              </div>
-            ))}
-          </div>
-          <div className="max-w-xl mx-auto mt-6">
-            <p className="text-center text-white bg-gray-900 py-2 rounded-lg text-sm mb-2">{testimonials[4].name}</p>
-            <iframe
-              src={`https://player.vimeo.com/video/${testimonials[4].videoId}?color&autopause=0&loop=0&muted=0&title=0&portrait=0&byline=0`}
-              allowFullScreen
-              loading="lazy"
-              width="100%"
-              style={{ aspectRatio: "16/9" }}
-              className="rounded-xl shadow-lg"
-            />
-          </div>
-          <div className="mt-6 text-center bg-gray-100 rounded-xl p-4">
-            <p className="text-gray-700 text-sm">
-              Contribua com nosso metodo. Envie seu depoimento para: <strong>contato@dotadomaximo.com.br</strong>
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="py-8 bg-gradient-to-br from-blue-50 to-cyan-50">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-6">Perguntas Frequentes</h2>
-          <div className="space-y-3">
-            {faqs.map((f, i) => (
-              <div key={i} className="bg-white rounded-xl shadow-lg overflow-hidden border-l-4 border-blue-600">
-                <button
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="flex items-center justify-between w-full p-4 text-left hover:bg-gray-50"
-                >
-                  <span className="font-medium text-gray-900">{f.question}</span>
-                  <span className="text-gray-500">{openFaq === i ? "−" : "+"}</span>
-                </button>
-                {openFaq === i && (
-                  <div className="px-4 pb-4">
-                    <p className="text-sm text-gray-600">{f.answer}</p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-6">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-gray-400 text-sm">© 2025 Metodo Dotado Maximo. Todos os direitos reservados.</p>
-        </div>
-      </footer>
-    </div>
+      </div>
+    </>
   )
 }
