@@ -7,24 +7,24 @@ const IMG_CDN = "https://metodotripe.shop"
 const VID_CDN = "https://institutoduramax.com"
 const AVT_CDN = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com"
 
+// ─── Helper: formato BR de número (vírgula no decimal) ───────────────────────
+const ptNum = (n: number, decimals = 1) => n.toFixed(decimals).replace(".", ",")
+
 // ─── Slideshow data (kept top-level so we can preload the first one) ──────────
 const SLIDES = [
   { src: `${IMG_CDN}/wp-content/uploads/2026/02/02-.jpg`,
-    label: "Patient R.S. — +5.2cm · Verified" },
+    label: "Paciente R.S. — +5,2cm · Verificado" },
   { src: `${IMG_CDN}/wp-content/uploads/2026/01/22109742.jpg`,
-    label: "Patient M.L. — +6.1cm · Verified" },
+    label: "Paciente M.L. — +6,1cm · Verificado" },
   { src: `${IMG_CDN}/wp-content/uploads/2026/02/PACIENTE-H-2990-ANTES-E-DEPOIS-1-1-scaled-1.webp`,
-    label: "Patient H.L. — +4.8cm · Verified" },
+    label: "Paciente H.L. — +4,8cm · Verificado" },
   { src: `${IMG_CDN}/wp-content/uploads/2026/02/daf6ef_d639bfc5b0a34189b18c48e3f54f2763_mv2-1.png`,
-    label: "Patient A.C. — +5.7cm · Verified" },
+    label: "Paciente A.C. — +5,7cm · Verificado" },
   { src: `${IMG_CDN}/wp-content/uploads/2026/02/7564b4c41b95c4d46ca0_-_94d8bd698ca2c759ce37_-_inserir-um-titulo.jpg`,
-    label: "Patient J.G. — +4.3cm · Verified" },
+    label: "Paciente J.G. — +4,3cm · Verificado" },
 ] as const
 
 // ─── Resource Hints + Fonts ───────────────────────────────────────────────────
-// Next.js (App Router) and React 19 automatically hoist <link> tags to <head>.
-// This is far faster than @import inside <style> (which is render-blocking).
-
 function ResourceHints() {
   return (
     <>
@@ -33,12 +33,10 @@ function ResourceHints() {
       <link rel="preconnect" href={IMG_CDN} crossOrigin="anonymous" />
       <link rel="preconnect" href={VID_CDN} crossOrigin="anonymous" />
       <link rel="preconnect" href={AVT_CDN} crossOrigin="anonymous" />
-      {/* Only the weights actually used: Montserrat 700/800 + Roboto 400/500/600/700 */}
       <link
         rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Roboto:wght@400;500;600;700&display=swap"
       />
-      {/* Preload first slideshow image — used on the loading screen */}
       <link rel="preload" as="image" href={SLIDES[0].src} fetchPriority="high" />
     </>
   )
@@ -70,7 +68,6 @@ function GlobalStyles() {
         .animate-slide-up { animation: slide-up 0.25s ease-out forwards; will-change: transform, opacity; }
         .animate-progress-glow { animation: progress-glow 2s ease-in-out infinite; }
 
-        /* OptionBtn — CSS-only hover (no React re-renders on mouse move) */
         .opt-btn {
           width: 100%;
           display: flex;
@@ -125,7 +122,6 @@ function GlobalStyles() {
           background: #36c57c;
         }
 
-        /* CTA hover lift */
         .cta-btn { transition: transform .18s, box-shadow .18s; }
         @media (hover: hover) {
           .cta-btn:hover:not(:disabled) { transform: translateY(-2px); }
@@ -135,7 +131,7 @@ function GlobalStyles() {
   )
 }
 
-// ─── Tracking (deferred to idle, off main thread on first paint) ──────────────
+// ─── Tracking (deferred to idle) ──────────────────────────────────────────────
 
 const loadFbPixel = () => {
   if (typeof window === "undefined" || (window as any).fbq) return
@@ -165,13 +161,12 @@ const useFbPixel = () => {
   }, [])
 }
 
-// ─── Prefetch slideshow images during the quiz, so loading screen is instant ──
+// ─── Prefetch slideshow images during the quiz ────────────────────────────────
 
 const usePrefetchSlides = () => {
   useEffect(() => {
     if (typeof window === "undefined") return
     const run = () => {
-      // Skip index 0 — already preloaded via <link rel="preload">
       for (let i = 1; i < SLIDES.length; i++) {
         const img = new Image()
         img.decoding = "async"
@@ -213,101 +208,101 @@ const STEPS: Step[] = [
   {
     kind: "q",
     id: "age",
-    q: "How old are you?",
-    hint: "This determines your growth window and protocol intensity",
+    q: "Qual é a sua idade?",
+    hint: "Isso define a sua janela de crescimento e a intensidade do protocolo",
     opts: ["18 – 25", "26 – 35", "36 – 50", "51 – 65"],
   },
   {
     kind: "q",
     id: "goal",
-    q: "What's your primary goal right now?",
-    hint: "We'll build your plan around this",
+    q: "Qual é o seu objetivo principal agora?",
+    hint: "Vamos montar o seu plano com base nisso",
     opts: [
-      "Increase size — length and girth",
-      "Last longer and improve stamina",
-      "Stronger, harder erections",
-      "All of the above",
+      "Aumentar o tamanho — comprimento e espessura",
+      "Durar mais e melhorar o desempenho",
+      "Ereções mais fortes e firmes",
+      "Todas as opções acima",
     ],
   },
   {
     kind: "q",
     id: "erections",
-    q: "How often do you wake up with a morning erection?",
-    hint: "A key indicator of testosterone and blood flow health",
-    note: "Morning erections are the clearest indicator of testosterone production and arterial health.",
-    opts: ["Almost never", "Rarely — once or twice a week", "Most mornings", "Every single morning"],
+    q: "Com que frequência você acorda com ereção matinal?",
+    hint: "Um indicador-chave da saúde de testosterona e do fluxo sanguíneo",
+    note: "A ereção matinal é o indicador mais claro da produção de testosterona e da saúde arterial.",
+    opts: ["Quase nunca", "Raramente — uma ou duas vezes por semana", "Na maioria das manhãs", "Toda santa manhã"],
   },
   {
     kind: "info",
     id: "info1",
-    title: "Pelvic floor weakness can be the invisible cause behind premature ejaculation",
+    title: "A fraqueza do assoalho pélvico pode ser a causa invisível por trás da ejaculação precoce",
     video: `${VID_CDN}/wp-content/uploads/2025/05/Assoalho-Pelvico-2.mp4`,
-    quote: "Chronic tension or weakness of the pelvic muscles can make ejaculation automatic and uncontrollable.",
+    quote: "A tensão crônica ou a fraqueza dos músculos pélvicos pode tornar a ejaculação automática e incontrolável.",
   },
   {
     kind: "q",
     id: "size",
-    q: "What's your current erect length?",
-    hint: "Be honest — your results are completely private",
+    q: "Qual é o seu tamanho atual em ereção?",
+    hint: "Seja honesto — os seus resultados são totalmente privados",
     opts: [
-      "Under 12 cm  (4.7\")",
-      "12 – 14 cm  (4.7\" – 5.5\")",
-      "14 – 16 cm  (5.5\" – 6.3\")",
-      "Over 16 cm  (6.3\"+)",
+      "Menos de 12 cm",
+      "12 – 14 cm",
+      "14 – 16 cm",
+      "Mais de 16 cm",
     ],
   },
   {
     kind: "q",
     id: "sleep",
-    q: "How many hours of sleep do you typically get?",
-    hint: "Sleep is when testosterone is produced — it matters more than you think",
-    note: "Up to 70% of daily testosterone is produced during deep sleep. Less than 6 hours can cut your growth potential nearly in half.",
-    opts: ["Under 5 hours", "5 – 6 hours", "6 – 7 hours", "8 hours or more"],
+    q: "Quantas horas você costuma dormir por noite?",
+    hint: "É no sono que a testosterona é produzida — isso importa mais do que você imagina",
+    note: "Até 70% da testosterona diária é produzida durante o sono profundo. Menos de 6 horas pode reduzir o seu potencial de crescimento quase pela metade.",
+    opts: ["Menos de 5 horas", "5 – 6 horas", "6 – 7 horas", "8 horas ou mais"],
   },
   {
     kind: "q",
     id: "exercise",
-    q: "How often do you exercise per week?",
-    hint: "Physical activity directly stimulates growth hormone production",
-    opts: ["Rarely or never", "Once a week", "2 – 3 times a week", "4 or more times a week"],
+    q: "Com que frequência você se exercita por semana?",
+    hint: "A atividade física estimula diretamente a produção do hormônio do crescimento",
+    opts: ["Raramente ou nunca", "Uma vez por semana", "2 – 3 vezes por semana", "4 vezes ou mais por semana"],
   },
   {
     kind: "info",
     id: "info2",
-    title: "Ejaculatory control is directly linked to pelvic floor muscle strength",
+    title: "O controle ejaculatório está diretamente ligado à força dos músculos do assoalho pélvico",
     video: `${VID_CDN}/wp-content/uploads/2025/05/Assoalho-Pelvico-1.mp4`,
-    quote: "Strengthening these muscles allows better control of the ejaculatory reflex and increased blood retention.",
+    quote: "Fortalecer esses músculos permite um melhor controle do reflexo ejaculatório e uma maior retenção sanguínea.",
   },
   {
     kind: "q",
     id: "diet",
-    q: "How would you honestly describe your diet?",
-    hint: "Nutrition fuels tissue expansion at a cellular level",
+    q: "Como você descreveria honestamente a sua alimentação?",
+    hint: "A nutrição alimenta a expansão tecidual em nível celular",
     opts: [
-      "Mostly takeaways and crisps",
-      "Half-and-half — depends on the day",
-      "Generally balanced meals",
-      "Clean, whole foods most of the time",
+      "Principalmente fast food e besteiras",
+      "Meio a meio — depende do dia",
+      "Refeições equilibradas no geral",
+      "Comida de verdade na maior parte do tempo",
     ],
   },
   {
     kind: "q",
     id: "tried",
-    q: "Have you ever tried a natural enhancement method before?",
-    hint: "This determines where we begin your protocol",
-    note: "Pumps and weights cause micro-injuries that block growth. Your protocol begins with a recovery phase if needed.",
+    q: "Você já tentou algum método natural de aumento antes?",
+    hint: "Isso determina onde começamos o seu protocolo",
+    note: "Bombas e pesos causam microlesões que bloqueiam o crescimento. O seu protocolo começa com uma fase de recuperação, se necessário.",
     opts: [
-      "No — never heard of one",
-      "Heard of it but never tried",
-      "Tried it but wasn't consistent",
-      "Yes — but saw little to no results",
+      "Não — nunca ouvi falar",
+      "Já ouvi falar mas nunca tentei",
+      "Tentei mas não fui consistente",
+      "Sim — mas vi pouco ou nenhum resultado",
     ],
   },
   {
     kind: "h",
     id: "height",
-    q: "What's your height?",
-    hint: "Used to fine-tune your hormonal baseline",
+    q: "Qual é a sua altura?",
+    hint: "Usado para ajustar finamente o seu perfil hormonal",
   },
 ]
 
@@ -320,17 +315,17 @@ const calcGain = (a: Record<number, string>): number => {
   if (a[0]?.includes("18")) g += 1.1
   else if (a[0]?.includes("26")) g += 0.7
   else if (a[0]?.includes("36")) g += 0.4
-  if (a[2] === "Every single morning") g += 0.7
-  else if (a[2] === "Most mornings") g += 0.4
-  if (a[5]?.includes("4 or more")) g += 0.5
+  if (a[2] === "Toda santa manhã") g += 0.7
+  else if (a[2] === "Na maioria das manhãs") g += 0.4
+  if (a[5]?.includes("4 vezes")) g += 0.5
   else if (a[5]?.includes("2 – 3")) g += 0.3
-  if (a[6]?.includes("Clean") || a[6]?.includes("balanced")) g += 0.4
-  if (a[4]?.includes("8 hours") || a[4]?.includes("6 – 7")) g += 0.3
+  if (a[6]?.includes("Comida de verdade") || a[6]?.includes("equilibradas")) g += 0.4
+  if (a[4]?.includes("8 horas") || a[4]?.includes("6 – 7")) g += 0.3
   return Math.min(7.5, Math.round(g * 10) / 10)
 }
 
 const baseSize = (a: Record<number, string>): number => {
-  if (a[3]?.includes("Under")) return 11
+  if (a[3]?.includes("Menos de")) return 11
   if (a[3]?.includes("12 – 14")) return 13
   if (a[3]?.includes("14 – 16")) return 15
   return 17
@@ -351,19 +346,19 @@ const Header = memo(function Header() {
         className="text-[10px] font-semibold tracking-[0.22em] uppercase mb-1"
         style={{ color: "#669ef3" }}
       >
-        Free Professional Consultation
+        Consultoria Profissional Gratuita
       </p>
       <h1
         className="text-[26px] sm:text-[32px] font-extrabold text-white uppercase leading-tight"
         style={{ fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.5px" }}
       >
-        Congolese Protocol
+        Protocolo Congolês
       </h1>
       <p
         className="text-[10px] tracking-widest uppercase mt-1"
         style={{ color: "#669ef3" }}
       >
-        Natural Growth System
+        Sistema de Crescimento Natural
       </p>
     </header>
   )
@@ -420,7 +415,7 @@ const ProgressBar = memo(function ProgressBar({ step }: { step: number }) {
     <div className="px-4 pt-4 pb-3">
       <div className="p-3 rounded-lg" style={{ backgroundColor: "#002855" }}>
         <div className="flex justify-between text-[11px] mb-2 font-semibold" style={{ color: "#94a3b8" }}>
-          <span>Question {step} of {TOTAL_Q}</span>
+          <span>Pergunta {step} de {TOTAL_Q}</span>
           <span>{pct}%</span>
         </div>
         <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: "#1e3a5f" }}>
@@ -504,7 +499,7 @@ function HeightStep({
                 color: u === unit ? "#fff" : "#5e7d9f",
               }}
             >
-              {u === "cm" ? "cm" : "ft / in"}
+              {u === "cm" ? "cm" : "pés / pol"}
             </button>
           ))}
         </div>
@@ -522,13 +517,13 @@ function HeightStep({
             >
               {height}
             </div>
-            <div className="text-sm mb-5" style={{ color: "#5e7d9f" }}>centimetres</div>
+            <div className="text-sm mb-5" style={{ color: "#5e7d9f" }}>centímetros</div>
             <input
               type="range" min={140} max={225} value={height}
               onChange={(e) => onHeight(+e.target.value)}
               className="w-full cursor-pointer"
               style={{ accentColor: "#003466" }}
-              aria-label="Height in centimetres"
+              aria-label="Altura em centímetros"
             />
             <div className="flex justify-between text-xs mt-1.5" style={{ color: "#9ca3af" }}>
               <span>140 cm</span><span>225 cm</span>
@@ -545,23 +540,23 @@ function HeightStep({
             <div className="text-sm mb-5" style={{ color: "#5e7d9f" }}>{height} cm</div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <div className="text-xs mb-1 font-medium" style={{ color: "#5e7d9f" }}>Feet (4 – 7)</div>
+                <div className="text-xs mb-1 font-medium" style={{ color: "#5e7d9f" }}>Pés (4 – 7)</div>
                 <input
                   type="range" min={4} max={7} value={feetVal}
                   onChange={(e) => onFt(+e.target.value)}
                   className="w-full cursor-pointer"
                   style={{ accentColor: "#003466" }}
-                  aria-label="Height in feet"
+                  aria-label="Altura em pés"
                 />
               </div>
               <div>
-                <div className="text-xs mb-1 font-medium" style={{ color: "#5e7d9f" }}>Inches (0 – 11)</div>
+                <div className="text-xs mb-1 font-medium" style={{ color: "#5e7d9f" }}>Polegadas (0 – 11)</div>
                 <input
                   type="range" min={0} max={11} value={inchVal}
                   onChange={(e) => onIn(+e.target.value)}
                   className="w-full cursor-pointer"
                   style={{ accentColor: "#003466" }}
-                  aria-label="Height in inches"
+                  aria-label="Altura em polegadas"
                 />
               </div>
             </div>
@@ -582,7 +577,7 @@ function HeightStep({
             : { backgroundColor: "#e5e7eb", color: "#9ca3af", cursor: "not-allowed" }),
         }}
       >
-        Generate My Personalised Plan →
+        Gerar Meu Plano Personalizado →
       </button>
     </div>
   )
@@ -591,11 +586,11 @@ function HeightStep({
 // ─── Loading Screen ───────────────────────────────────────────────────────────
 
 const ANALYSIS = [
-  "Tissue Expansion Capacity",
-  "Natural Growth Potential",
-  "Vascular Flow Index",
-  "Kegel Strength Baseline",
-  "Protocol Match Score",
+  "Capacidade de Expansão Tecidual",
+  "Potencial de Crescimento Natural",
+  "Índice de Fluxo Vascular",
+  "Base de Força do Kegel",
+  "Compatibilidade com o Protocolo",
 ]
 
 function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => void }) {
@@ -633,10 +628,10 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
             className="text-xl font-extrabold text-center mb-1"
             style={{ color: "#003466", fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.5px" }}
           >
-            Analysing Your Profile
+            Analisando o Seu Perfil
           </h2>
           <p className="text-center text-sm mb-5" style={{ color: "#5e7d9f" }}>
-            Building your personalised protocol…
+            Montando o seu protocolo personalizado…
           </p>
 
           <div
@@ -699,7 +694,7 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
                       className="text-xs font-bold transition-all duration-300"
                       style={{ color: done ? "#36c57c" : active ? "#f59e0b" : "#d1d5db" }}
                     >
-                      {done ? "✓ Done" : active ? "Running…" : "Pending"}
+                      {done ? "✓ Pronto" : active ? "Analisando…" : "Aguardando"}
                     </span>
                   </div>
                   <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: "#f3f4f6" }}>
@@ -724,7 +719,7 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
             >
               {Math.round(progress)}%
             </div>
-            <div className="text-sm mt-1" style={{ color: "#5e7d9f" }}>Analysis in progress</div>
+            <div className="text-sm mt-1" style={{ color: "#5e7d9f" }}>Análise em andamento</div>
             <div className="mt-4 h-2.5 rounded-full overflow-hidden mx-8" style={{ backgroundColor: "#e5e7eb" }}>
               <div
                 className="h-full rounded-full transition-all duration-500 relative"
@@ -739,7 +734,7 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
 
         <div className="flex items-center justify-center gap-2 text-xs animate-slide-up" style={{ color: "#669ef3", animationDelay: "200ms" }}>
           <LockIcon className="w-3 h-3" />
-          Your data is 100% private and never shared
+          Seus dados são 100% privados e nunca compartilhados
         </div>
       </div>
     </div>
@@ -750,18 +745,18 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
 
 const TESTIMONIALS = [
   {
-    name: "Ciarán M.", location: "Cork", age: 34, gain: "+3.7cm",
-    text: "I congratulate you for what you're offering. My insecurity had me locked away. I only went out to earn money, which I then spent on things that didn't work — pills, pumps and weights. Putting your method into practice was like coming back to life. You explain everything so simply and clearly...",
+    name: "Carlos M.", location: "São Paulo", age: 34, gain: "+3,7cm",
+    text: "Te parabenizo pelo que está oferecendo. Minha insegurança me deixava trancado em casa. Eu só saía pra ganhar dinheiro, que depois eu gastava com coisas que não funcionavam — pílulas, bombas e pesos. Colocar o seu método em prática foi como voltar à vida. Você explica tudo de forma simples e clara...",
     avatar: `${AVT_CDN}/t-carlos-MFpfh0uYLjKM4F1SPcbnuQKjCo44EA.png`,
   },
   {
-    name: "Darragh K.", location: "Dublin", age: 38, gain: "+3.7cm",
-    text: "I'm so grateful to you. But my wife is even more grateful! You saved my marriage. The change was incredible, very noticeable and faster than I thought. From 15 to 18.7 centimetres, and the girth from 11 to 12.8 centimetres. My wife is having the time of her life. And thanks to you, it's with me! You truly freed me from a huge problem. Thanks mate!",
+    name: "Roberto K.", location: "Rio de Janeiro", age: 38, gain: "+3,7cm",
+    text: "Sou muito grato a você. Mas minha esposa é ainda mais grata! Você salvou meu casamento. A mudança foi incrível, muito perceptível e mais rápida do que eu imaginava. De 15 para 18,7 centímetros, e a espessura de 11 para 12,8 centímetros. Minha esposa está tendo o melhor momento da vida dela. E graças a você, é comigo! Você me libertou de um problema enorme. Valeu mesmo, irmão!",
     avatar: `${AVT_CDN}/t-roberto-2Rp5y8EWVWsiZMO2qU5P11CwfCjyiI.png`,
   },
   {
-    name: "Seán F.", location: "Galway", age: 42, gain: "+4.2cm",
-    text: "It was a rough few months. My wife Paula left me after 7 years of marriage. I don't blame her — we'd gone over a year without a proper intimate relationship... Being single again with zero confidence was pushing me into depression. I tried many things out there, but only got pain and wasted money. A friend recommended your system and I had doubts, but with nothing to lose I followed your instructions... Now I'm not only bigger, but harder and lasting longer. In 2 months I've been with 5 new women, and each one had explosive experiences! Apparently my ex found out and now wants me back...",
+    name: "Jorge F.", location: "Belo Horizonte", age: 42, gain: "+4,2cm",
+    text: "Foram alguns meses difíceis. Minha esposa Paula me deixou depois de 7 anos de casamento. Eu não a culpo — já tínhamos passado mais de um ano sem uma relação íntima de verdade... Estar solteiro de novo com zero confiança estava me empurrando pra depressão. Tentei várias coisas por aí, mas só ganhei dor e dinheiro perdido. Um amigo me indicou o seu sistema e eu tive minhas dúvidas, mas sem nada a perder eu segui as suas instruções... Agora eu não só estou maior, como também mais firme e durando mais. Em 2 meses fiquei com 5 mulheres diferentes, e cada uma teve experiências explosivas! Aparentemente minha ex ficou sabendo e agora quer voltar...",
     avatar: `${AVT_CDN}/t-jorge-378PxPddkBoypl3foZkPdOHRRwiEqb.png`,
   },
 ]
@@ -778,12 +773,12 @@ function ResultsScreen({
   const [spots, setSpots] = useState(3)
 
   const protocolName =
-    answers[0]?.includes("51") ? "Revitalise Protocol" :
-    answers[0]?.includes("36") ? "Peak Performance Protocol" :
-    answers[0]?.includes("26") ? "Prime Growth Protocol" :
-    "Rapid Growth Protocol"
+    answers[0]?.includes("51") ? "Protocolo Revitalizar" :
+    answers[0]?.includes("36") ? "Protocolo Performance Máxima" :
+    answers[0]?.includes("26") ? "Protocolo Crescimento Prime" :
+    "Protocolo Crescimento Rápido"
 
-  const ageLabel = answers[0]?.match(/\d+\s*[–-]\s*\d+/)?.[0] ?? "your age group"
+  const ageLabel = answers[0]?.match(/\d+\s*[–-]\s*\d+/)?.[0] ?? "sua faixa etária"
 
   useEffect(() => {
     setSpots(Math.floor(Math.random() * 2) + 2)
@@ -805,7 +800,7 @@ function ResultsScreen({
     <div className="min-h-screen pb-16" style={{ backgroundColor: "#f0f4ff", fontFamily: "'Roboto', sans-serif" }}>
       <div className="text-white text-center py-2.5 px-4" style={{ backgroundColor: "#36c57c" }}>
         <p className="text-sm font-bold" style={{ fontFamily: "'Montserrat', sans-serif" }}>
-          Your personalised plan is ready — {spots} spot{spots !== 1 ? "s" : ""} remaining today
+          Seu plano personalizado está pronto — {spots} vaga{spots !== 1 ? "s" : ""} restante{spots !== 1 ? "s" : ""} hoje
         </p>
       </div>
 
@@ -819,9 +814,9 @@ function ResultsScreen({
         >
           <div>
             <div className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "#d97706" }}>
-              Reserved for you
+              Reservado para você
             </div>
-            <div className="text-sm font-medium" style={{ color: "#92400e" }}>Your plan expires in</div>
+            <div className="text-sm font-medium" style={{ color: "#92400e" }}>Seu plano expira em</div>
           </div>
           <div
             className="text-3xl font-extrabold tabular-nums"
@@ -841,7 +836,7 @@ function ResultsScreen({
               className="text-[10px] font-semibold tracking-[0.2em] uppercase mb-1"
               style={{ color: "#669ef3" }}
             >
-              Your Personalised Plan
+              Seu Plano Personalizado
             </div>
             <div
               className="text-[26px] font-extrabold"
@@ -850,7 +845,7 @@ function ResultsScreen({
               {protocolName}
             </div>
             <div className="text-sm mt-0.5" style={{ color: "#669ef3" }}>
-              Congolese Protocol + Kegel Training · Calibrated for {ageLabel}
+              Protocolo Congolês + Treino de Kegel · Calibrado para {ageLabel}
             </div>
           </div>
 
@@ -864,22 +859,22 @@ function ResultsScreen({
                 borderRadius: "8px",
               }}
             >
-              <div className="text-sm mb-1" style={{ color: "#5e7d9f" }}>Your projected gain in 45 days</div>
+              <div className="text-sm mb-1" style={{ color: "#5e7d9f" }}>Seu ganho projetado em 45 dias</div>
               <div
                 className="text-7xl font-extrabold leading-none"
                 style={{ color: "#003466", fontFamily: "'Montserrat', sans-serif" }}
               >
-                +{gain}<span className="text-4xl">cm</span>
+                +{ptNum(gain)}<span className="text-4xl">cm</span>
               </div>
               <div className="text-sm mt-1.5" style={{ color: "#5e7d9f" }}>
-                Based on your age, health profile and hormone baseline
+                Baseado na sua idade, perfil de saúde e linha base hormonal
               </div>
             </div>
 
             {/* Size visualiser */}
             <div>
               <div className="flex justify-between text-xs font-bold uppercase tracking-wide mb-2" style={{ color: "#5e7d9f" }}>
-                <span>Now</span><span>Day 45</span>
+                <span>Agora</span><span>Dia 45</span>
               </div>
               <div className="relative h-6 rounded-full overflow-hidden" style={{ backgroundColor: "#f3f4f6" }}>
                 <div
@@ -891,7 +886,7 @@ function ResultsScreen({
                   style={{ width: `${(target / 22) * 100}%`, background: "linear-gradient(to right, #003466, #025fde)" }}
                 />
                 <div className="absolute inset-0 flex items-center justify-center text-white text-xs font-extrabold">
-                  {current}cm → {target}cm
+                  {current}cm → {ptNum(target)}cm
                 </div>
               </div>
             </div>
@@ -899,9 +894,9 @@ function ResultsScreen({
             {/* Timeline milestones */}
             <div className="grid grid-cols-3 gap-2.5">
               {[
-                { t: "Week 2", v: `+${+(gain * 0.28).toFixed(1)}cm`, n: "First changes" },
-                { t: "Day 21", v: `+${+(gain * 0.58).toFixed(1)}cm`, n: "Visible growth" },
-                { t: "Day 45", v: `+${gain}cm`, n: "Full result" },
+                { t: "Semana 2", v: `+${ptNum(gain * 0.28)}cm`, n: "Primeiras mudanças" },
+                { t: "Dia 21", v: `+${ptNum(gain * 0.58)}cm`, n: "Crescimento visível" },
+                { t: "Dia 45", v: `+${ptNum(gain)}cm`, n: "Resultado completo" },
               ].map((m) => (
                 <div
                   key={m.t}
@@ -923,13 +918,13 @@ function ResultsScreen({
             {/* Benefits */}
             <div className="space-y-2.5 pt-1">
               {[
-                "Increase length and girth naturally — zero devices",
-                "Stronger, longer-lasting erections",
-                "Advanced Kegel techniques for stamina and control",
-                "First visible results within 14 days",
-                "Improved confidence and bedroom performance",
-                "No pills, no pumps, no side effects",
-                "Discreet — everything done at home",
+                "Aumente comprimento e espessura naturalmente — sem aparelhos",
+                "Ereções mais fortes e duradouras",
+                "Técnicas avançadas de Kegel para resistência e controle",
+                "Primeiros resultados visíveis em 14 dias",
+                "Mais confiança e desempenho na cama",
+                "Sem pílulas, sem bombas, sem efeitos colaterais",
+                "Discreto — tudo feito em casa",
               ].map((b) => (
                 <div key={b} className="flex items-start gap-3">
                   <div
@@ -951,7 +946,7 @@ function ResultsScreen({
             className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-center mb-3"
             style={{ color: "#5e7d9f", fontFamily: "'Montserrat', sans-serif" }}
           >
-            Real results from men in Ireland
+            Resultados reais de homens no Brasil
           </div>
           <div className="space-y-3">
             {TESTIMONIALS.map((t, idx) => (
@@ -968,7 +963,7 @@ function ResultsScreen({
                 <div className="flex items-start gap-3">
                   <img
                     src={t.avatar}
-                    alt={`${t.name} avatar`}
+                    alt={`Foto de ${t.name}`}
                     width={56}
                     height={56}
                     loading="lazy"
@@ -991,7 +986,7 @@ function ResultsScreen({
                           fontFamily: "'Montserrat', sans-serif",
                         }}
                       >
-                        {t.gain} verified
+                        {t.gain} verificado
                       </span>
                     </div>
                     <div className="flex gap-0.5 mb-2">
@@ -1019,10 +1014,10 @@ function ResultsScreen({
               className="text-white font-extrabold text-base"
               style={{ fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.5px" }}
             >
-              30-Day Money-Back Guarantee
+              Garantia de 30 Dias com Devolução do Dinheiro
             </div>
             <div className="text-sm mt-0.5" style={{ color: "#669ef3" }}>
-              Zero results in 30 days? Full refund. No questions asked.
+              Sem resultados em 30 dias? Reembolso total. Sem perguntas.
             </div>
           </div>
         </div>
@@ -1039,14 +1034,14 @@ function ResultsScreen({
               letterSpacing: "0.5px",
             }}
           >
-            Claim My Plan Now →
+            Quero Meu Plano Agora →
           </button>
 
           <div className="flex items-center justify-center gap-3 text-xs flex-wrap" style={{ color: "#5e7d9f" }}>
-            <span className="flex items-center gap-1"><LockIcon className="w-3 h-3" /> Secure checkout</span>
-            <span>·</span><span>Discreet billing</span>
-            <span>·</span><span>Ships to Ireland</span>
-            <span>·</span><span>EUR pricing</span>
+            <span className="flex items-center gap-1"><LockIcon className="w-3 h-3" /> Checkout seguro</span>
+            <span>·</span><span>Cobrança discreta</span>
+            <span>·</span><span>Acesso imediato</span>
+            <span>·</span><span>Preço em Real</span>
           </div>
 
           <div
@@ -1054,7 +1049,7 @@ function ResultsScreen({
             style={{ backgroundColor: "#fffbeb", border: "1px solid #fcd34d", borderRadius: "8px" }}
           >
             <p className="text-sm font-bold" style={{ color: "#b45309" }}>
-              ⚡ {spots} spot{spots !== 1 ? "s" : ""} left at this price — expires in {fmt(secs)}
+              ⚡ {spots} vaga{spots !== 1 ? "s" : ""} restante{spots !== 1 ? "s" : ""} neste preço — expira em {fmt(secs)}
             </p>
           </div>
         </div>
@@ -1065,7 +1060,7 @@ function ResultsScreen({
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
-export default function IrelandQuiz() {
+export default function BrasilQuiz() {
   useFbPixel()
   usePrefetchSlides()
 
@@ -1112,7 +1107,6 @@ export default function IrelandQuiz() {
       const answers = { ...prev.answers, [prev.stepIndex]: val }
       const next = prev.stepIndex + 1
       if (next >= STEPS.length) {
-        // Trigger load on next tick to avoid setState-during-render
         setTimeout(startLoad, 0)
         return { ...prev, answers }
       }
@@ -1169,7 +1163,7 @@ export default function IrelandQuiz() {
         <ResultsScreen
           answers={s.answers}
           height={s.height}
-          onCTA={() => window.open("https://pay.hotmart.com/U104868943B?off=n8cjjaa1&checkoutMode=10", "_blank")}
+          onCTA={() => window.open("https://pay.wiapy.com/1kMSJdYl0", "_blank")}
         />
       </>
     )
@@ -1200,7 +1194,7 @@ export default function IrelandQuiz() {
                   className="text-[10px] font-extrabold uppercase tracking-[0.22em] mb-1"
                   style={{ color: "#d1d5db", fontFamily: "'Montserrat', sans-serif" }}
                 >
-                  Did you know?
+                  Você sabia?
                 </div>
                 <h2
                   className="text-xl sm:text-[22px] font-extrabold leading-tight"
@@ -1241,7 +1235,7 @@ export default function IrelandQuiz() {
                     color: "#fff",
                   }}
                 >
-                  Got it! <span>→</span>
+                  Entendi! <span>→</span>
                 </button>
                 {s.stepIndex > 0 && (
                   <button
@@ -1249,7 +1243,7 @@ export default function IrelandQuiz() {
                     className="text-sm flex items-center gap-1 transition-opacity hover:opacity-70"
                     style={{ color: "#5e7d9f" }}
                   >
-                    ← Previous
+                    ← Anterior
                   </button>
                 )}
               </div>
@@ -1280,7 +1274,7 @@ export default function IrelandQuiz() {
                 className="text-[10px] font-extrabold uppercase tracking-[0.22em] mb-3"
                 style={{ color: "#d1d5db", fontFamily: "'Montserrat', sans-serif" }}
               >
-                {isHeight ? "Your Details" : `Question ${qNum} of ${TOTAL_Q}`}
+                {isHeight ? "Seus Dados" : `Pergunta ${qNum} de ${TOTAL_Q}`}
               </div>
 
               <h2
@@ -1336,7 +1330,7 @@ export default function IrelandQuiz() {
                   className="mt-5 text-sm flex items-center gap-1 transition-opacity hover:opacity-70"
                   style={{ color: "#5e7d9f" }}
                 >
-                  ← Previous question
+                  ← Pergunta anterior
                 </button>
               )}
             </div>
@@ -1349,7 +1343,7 @@ export default function IrelandQuiz() {
             >
               <span style={{ color: "#669ef3" }}><LockIcon className="w-4 h-4" /></span>
               <p className="text-xs font-semibold" style={{ color: "#669ef3" }}>
-                Your answers are 100% private — never shared or sold
+                Suas respostas são 100% privadas — nunca compartilhadas ou vendidas
               </p>
             </div>
           </div>
