@@ -7,9 +7,6 @@ const IMG_CDN = "https://metodotripe.shop"
 const VID_CDN = "https://institutoduramax.com"
 const AVT_CDN = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com"
 
-// ─── Helper: formato BR de número (vírgula no decimal) ───────────────────────
-const ptNum = (n: number, decimals = 1) => n.toFixed(decimals).replace(".", ",")
-
 // ─── Slideshow data (kept top-level so we can preload the first one) ──────────
 const SLIDES = [
   { src: `${IMG_CDN}/wp-content/uploads/2026/02/02-.jpg`,
@@ -131,7 +128,7 @@ function GlobalStyles() {
   )
 }
 
-// ─── Tracking (deferred to idle) ──────────────────────────────────────────────
+// ─── Tracking ─────────────────────────────────────────────────────────────────
 
 const loadFbPixel = () => {
   if (typeof window === "undefined" || (window as any).fbq) return
@@ -161,7 +158,7 @@ const useFbPixel = () => {
   }, [])
 }
 
-// ─── Prefetch slideshow images during the quiz ────────────────────────────────
+// ─── Prefetch slideshow ───────────────────────────────────────────────────────
 
 const usePrefetchSlides = () => {
   useEffect(() => {
@@ -208,42 +205,42 @@ const STEPS: Step[] = [
   {
     kind: "q",
     id: "age",
-    q: "Qual é a sua idade?",
-    hint: "Isso define a sua janela de crescimento e a intensidade do protocolo",
+    q: "Quantos anos você tem?",
+    hint: "Isso determina sua janela de crescimento e a intensidade do protocolo",
     opts: ["18 – 25", "26 – 35", "36 – 50", "51 – 65"],
   },
   {
     kind: "q",
     id: "goal",
-    q: "Qual é o seu objetivo principal agora?",
-    hint: "Vamos montar o seu plano com base nisso",
+    q: "Qual é o seu principal objetivo agora?",
+    hint: "Vamos montar seu plano em torno disso",
     opts: [
       "Aumentar o tamanho — comprimento e espessura",
-      "Durar mais e melhorar o desempenho",
+      "Durar mais e melhorar a resistência",
       "Ereções mais fortes e firmes",
-      "Todas as opções acima",
+      "Todos os itens acima",
     ],
   },
   {
     kind: "q",
     id: "erections",
     q: "Com que frequência você acorda com ereção matinal?",
-    hint: "Um indicador-chave da saúde de testosterona e do fluxo sanguíneo",
-    note: "A ereção matinal é o indicador mais claro da produção de testosterona e da saúde arterial.",
-    opts: ["Quase nunca", "Raramente — uma ou duas vezes por semana", "Na maioria das manhãs", "Toda santa manhã"],
+    hint: "Um indicador-chave da saúde da testosterona e do fluxo sanguíneo",
+    note: "As ereções matinais são o indicador mais claro da produção de testosterona e da saúde arterial.",
+    opts: ["Quase nunca", "Raramente — uma ou duas vezes por semana", "Na maioria das manhãs", "Toda manhã sem exceção"],
   },
   {
     kind: "info",
     id: "info1",
     title: "A fraqueza do assoalho pélvico pode ser a causa invisível por trás da ejaculação precoce",
     video: `${VID_CDN}/wp-content/uploads/2025/05/Assoalho-Pelvico-2.mp4`,
-    quote: "A tensão crônica ou a fraqueza dos músculos pélvicos pode tornar a ejaculação automática e incontrolável.",
+    quote: "A tensão crônica ou fraqueza dos músculos pélvicos pode tornar a ejaculação automática e incontrolável.",
   },
   {
     kind: "q",
     id: "size",
-    q: "Qual é o seu tamanho atual em ereção?",
-    hint: "Seja honesto — os seus resultados são totalmente privados",
+    q: "Qual é o seu comprimento ereto atual?",
+    hint: "Seja honesto — seus resultados são completamente privados",
     opts: [
       "Menos de 12 cm",
       "12 – 14 cm",
@@ -254,55 +251,55 @@ const STEPS: Step[] = [
   {
     kind: "q",
     id: "sleep",
-    q: "Quantas horas você costuma dormir por noite?",
-    hint: "É no sono que a testosterona é produzida — isso importa mais do que você imagina",
-    note: "Até 70% da testosterona diária é produzida durante o sono profundo. Menos de 6 horas pode reduzir o seu potencial de crescimento quase pela metade.",
+    q: "Quantas horas de sono você costuma ter por noite?",
+    hint: "O sono é quando a testosterona é produzida — isso importa mais do que você imagina",
+    note: "Até 70% da testosterona diária é produzida durante o sono profundo. Menos de 6 horas pode reduzir seu potencial de crescimento pela metade.",
     opts: ["Menos de 5 horas", "5 – 6 horas", "6 – 7 horas", "8 horas ou mais"],
   },
   {
     kind: "q",
     id: "exercise",
     q: "Com que frequência você se exercita por semana?",
-    hint: "A atividade física estimula diretamente a produção do hormônio do crescimento",
-    opts: ["Raramente ou nunca", "Uma vez por semana", "2 – 3 vezes por semana", "4 vezes ou mais por semana"],
+    hint: "A atividade física estimula diretamente a produção de hormônio do crescimento",
+    opts: ["Raramente ou nunca", "Uma vez por semana", "2 – 3 vezes por semana", "4 ou mais vezes por semana"],
   },
   {
     kind: "info",
     id: "info2",
     title: "O controle ejaculatório está diretamente ligado à força dos músculos do assoalho pélvico",
     video: `${VID_CDN}/wp-content/uploads/2025/05/Assoalho-Pelvico-1.mp4`,
-    quote: "Fortalecer esses músculos permite um melhor controle do reflexo ejaculatório e uma maior retenção sanguínea.",
+    quote: "Fortalecer esses músculos permite melhor controle do reflexo ejaculatório e maior retenção de sangue.",
   },
   {
     kind: "q",
     id: "diet",
-    q: "Como você descreveria honestamente a sua alimentação?",
+    q: "Como você descreveria honestamente sua alimentação?",
     hint: "A nutrição alimenta a expansão tecidual em nível celular",
     opts: [
-      "Principalmente fast food e besteiras",
-      "Meio a meio — depende do dia",
-      "Refeições equilibradas no geral",
-      "Comida de verdade na maior parte do tempo",
+      "Principalmente fast food e salgadinhos",
+      "Metade e metade — depende do dia",
+      "Refeições geralmente equilibradas",
+      "Alimentação limpa e natural na maior parte do tempo",
     ],
   },
   {
     kind: "q",
     id: "tried",
     q: "Você já tentou algum método natural de aumento antes?",
-    hint: "Isso determina onde começamos o seu protocolo",
-    note: "Bombas e pesos causam microlesões que bloqueiam o crescimento. O seu protocolo começa com uma fase de recuperação, se necessário.",
+    hint: "Isso determina por onde começamos o seu protocolo",
+    note: "Bombas e pesos causam microlesões que bloqueiam o crescimento. Seu protocolo começa com uma fase de recuperação, se necessário.",
     opts: [
       "Não — nunca ouvi falar",
       "Já ouvi falar mas nunca tentei",
-      "Tentei mas não fui consistente",
-      "Sim — mas vi pouco ou nenhum resultado",
+      "Tentei, mas não fui consistente",
+      "Sim — mas vi poucos ou nenhum resultado",
     ],
   },
   {
     kind: "h",
     id: "height",
     q: "Qual é a sua altura?",
-    hint: "Usado para ajustar finamente o seu perfil hormonal",
+    hint: "Usada para ajustar sua linha de base hormonal",
   },
 ]
 
@@ -315,17 +312,17 @@ const calcGain = (a: Record<number, string>): number => {
   if (a[0]?.includes("18")) g += 1.1
   else if (a[0]?.includes("26")) g += 0.7
   else if (a[0]?.includes("36")) g += 0.4
-  if (a[2] === "Toda santa manhã") g += 0.7
+  if (a[2] === "Toda manhã sem exceção") g += 0.7
   else if (a[2] === "Na maioria das manhãs") g += 0.4
-  if (a[5]?.includes("4 vezes")) g += 0.5
+  if (a[5]?.includes("4 ou mais")) g += 0.5
   else if (a[5]?.includes("2 – 3")) g += 0.3
-  if (a[6]?.includes("Comida de verdade") || a[6]?.includes("equilibradas")) g += 0.4
+  if (a[6]?.includes("limpa") || a[6]?.includes("equilibradas")) g += 0.4
   if (a[4]?.includes("8 horas") || a[4]?.includes("6 – 7")) g += 0.3
   return Math.min(7.5, Math.round(g * 10) / 10)
 }
 
 const baseSize = (a: Record<number, string>): number => {
-  if (a[3]?.includes("Menos de")) return 11
+  if (a[3]?.includes("Menos de 12")) return 11
   if (a[3]?.includes("12 – 14")) return 13
   if (a[3]?.includes("14 – 16")) return 15
   return 17
@@ -346,7 +343,7 @@ const Header = memo(function Header() {
         className="text-[10px] font-semibold tracking-[0.22em] uppercase mb-1"
         style={{ color: "#669ef3" }}
       >
-        Consultoria Profissional Gratuita
+        Consulta Profissional Gratuita
       </p>
       <h1
         className="text-[26px] sm:text-[32px] font-extrabold text-white uppercase leading-tight"
@@ -358,7 +355,7 @@ const Header = memo(function Header() {
         className="text-[10px] tracking-widest uppercase mt-1"
         style={{ color: "#669ef3" }}
       >
-        Sistema de Crescimento Natural
+        Sistema Natural de Crescimento
       </p>
     </header>
   )
@@ -589,8 +586,8 @@ const ANALYSIS = [
   "Capacidade de Expansão Tecidual",
   "Potencial de Crescimento Natural",
   "Índice de Fluxo Vascular",
-  "Base de Força do Kegel",
-  "Compatibilidade com o Protocolo",
+  "Linha de Base de Força Kegel",
+  "Pontuação de Correspondência do Protocolo",
 ]
 
 function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => void }) {
@@ -628,10 +625,10 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
             className="text-xl font-extrabold text-center mb-1"
             style={{ color: "#003466", fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.5px" }}
           >
-            Analisando o Seu Perfil
+            Analisando Seu Perfil
           </h2>
           <p className="text-center text-sm mb-5" style={{ color: "#5e7d9f" }}>
-            Montando o seu protocolo personalizado…
+            Criando seu protocolo personalizado…
           </p>
 
           <div
@@ -694,7 +691,7 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
                       className="text-xs font-bold transition-all duration-300"
                       style={{ color: done ? "#36c57c" : active ? "#f59e0b" : "#d1d5db" }}
                     >
-                      {done ? "✓ Pronto" : active ? "Analisando…" : "Aguardando"}
+                      {done ? "✓ Concluído" : active ? "Processando…" : "Aguardando"}
                     </span>
                   </div>
                   <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: "#f3f4f6" }}>
@@ -746,17 +743,17 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
 const TESTIMONIALS = [
   {
     name: "Carlos M.", location: "São Paulo", age: 34, gain: "+3,7cm",
-    text: "Te parabenizo pelo que está oferecendo. Minha insegurança me deixava trancado em casa. Eu só saía pra ganhar dinheiro, que depois eu gastava com coisas que não funcionavam — pílulas, bombas e pesos. Colocar o seu método em prática foi como voltar à vida. Você explica tudo de forma simples e clara...",
+    text: "Te parabenizo pelo que você está oferecendo. Minha insegurança me mantinha fechado. Só saía para ganhar dinheiro, que depois gastava com coisas que não funcionavam — pílulas, bombas e pesos. Colocar seu método em prática foi como voltar à vida. Você explica tudo de forma tão simples e clara...",
     avatar: `${AVT_CDN}/t-carlos-MFpfh0uYLjKM4F1SPcbnuQKjCo44EA.png`,
   },
   {
     name: "Roberto K.", location: "Rio de Janeiro", age: 38, gain: "+3,7cm",
-    text: "Sou muito grato a você. Mas minha esposa é ainda mais grata! Você salvou meu casamento. A mudança foi incrível, muito perceptível e mais rápida do que eu imaginava. De 15 para 18,7 centímetros, e a espessura de 11 para 12,8 centímetros. Minha esposa está tendo o melhor momento da vida dela. E graças a você, é comigo! Você me libertou de um problema enorme. Valeu mesmo, irmão!",
+    text: "Sou muito grato a você. Mas minha esposa é ainda mais grata! Você salvou meu casamento. A mudança foi incrível, muito perceptível e mais rápida do que eu imaginava. De 15 para 18,7 centímetros, e a espessura de 11 para 12,8 centímetros. Minha esposa está na melhor fase da vida dela. E graças a você, é comigo! Você me libertou de um problema enorme. Valeu demais!",
     avatar: `${AVT_CDN}/t-roberto-2Rp5y8EWVWsiZMO2qU5P11CwfCjyiI.png`,
   },
   {
     name: "Jorge F.", location: "Belo Horizonte", age: 42, gain: "+4,2cm",
-    text: "Foram alguns meses difíceis. Minha esposa Paula me deixou depois de 7 anos de casamento. Eu não a culpo — já tínhamos passado mais de um ano sem uma relação íntima de verdade... Estar solteiro de novo com zero confiança estava me empurrando pra depressão. Tentei várias coisas por aí, mas só ganhei dor e dinheiro perdido. Um amigo me indicou o seu sistema e eu tive minhas dúvidas, mas sem nada a perder eu segui as suas instruções... Agora eu não só estou maior, como também mais firme e durando mais. Em 2 meses fiquei com 5 mulheres diferentes, e cada uma teve experiências explosivas! Aparentemente minha ex ficou sabendo e agora quer voltar...",
+    text: "Foram meses difíceis. Minha esposa Paula me deixou após 7 anos de casamento. Não a culpo — ficamos mais de um ano sem uma relação íntima de verdade... Ficar solteiro de novo com zero confiança estava me levando à depressão. Tentei muita coisa, mas só tive dor e dinheiro perdido. Um amigo me indicou seu sistema e eu duvidei, mas sem nada a perder segui suas instruções... Agora não só sou maior, mas mais firme e durando mais. Em 2 meses fui com 5 mulheres novas, e cada uma teve experiências incríveis! Aparentemente minha ex ficou sabendo e agora quer voltar...",
     avatar: `${AVT_CDN}/t-jorge-378PxPddkBoypl3foZkPdOHRRwiEqb.png`,
   },
 ]
@@ -773,8 +770,8 @@ function ResultsScreen({
   const [spots, setSpots] = useState(3)
 
   const protocolName =
-    answers[0]?.includes("51") ? "Protocolo Revitalizar" :
-    answers[0]?.includes("36") ? "Protocolo Performance Máxima" :
+    answers[0]?.includes("51") ? "Protocolo Revitalização" :
+    answers[0]?.includes("36") ? "Protocolo Alta Performance" :
     answers[0]?.includes("26") ? "Protocolo Crescimento Prime" :
     "Protocolo Crescimento Rápido"
 
@@ -845,7 +842,7 @@ function ResultsScreen({
               {protocolName}
             </div>
             <div className="text-sm mt-0.5" style={{ color: "#669ef3" }}>
-              Protocolo Congolês + Treino de Kegel · Calibrado para {ageLabel}
+              Protocolo Congolês + Treino Kegel · Calibrado para {ageLabel}
             </div>
           </div>
 
@@ -864,10 +861,10 @@ function ResultsScreen({
                 className="text-7xl font-extrabold leading-none"
                 style={{ color: "#003466", fontFamily: "'Montserrat', sans-serif" }}
               >
-                +{ptNum(gain)}<span className="text-4xl">cm</span>
+                +{gain}<span className="text-4xl">cm</span>
               </div>
               <div className="text-sm mt-1.5" style={{ color: "#5e7d9f" }}>
-                Baseado na sua idade, perfil de saúde e linha base hormonal
+                Baseado na sua idade, perfil de saúde e linha de base hormonal
               </div>
             </div>
 
@@ -886,7 +883,7 @@ function ResultsScreen({
                   style={{ width: `${(target / 22) * 100}%`, background: "linear-gradient(to right, #003466, #025fde)" }}
                 />
                 <div className="absolute inset-0 flex items-center justify-center text-white text-xs font-extrabold">
-                  {current}cm → {ptNum(target)}cm
+                  {current}cm → {target}cm
                 </div>
               </div>
             </div>
@@ -894,9 +891,9 @@ function ResultsScreen({
             {/* Timeline milestones */}
             <div className="grid grid-cols-3 gap-2.5">
               {[
-                { t: "Semana 2", v: `+${ptNum(gain * 0.28)}cm`, n: "Primeiras mudanças" },
-                { t: "Dia 21", v: `+${ptNum(gain * 0.58)}cm`, n: "Crescimento visível" },
-                { t: "Dia 45", v: `+${ptNum(gain)}cm`, n: "Resultado completo" },
+                { t: "Semana 2", v: `+${+(gain * 0.28).toFixed(1)}cm`, n: "Primeiras mudanças" },
+                { t: "Dia 21", v: `+${+(gain * 0.58).toFixed(1)}cm`, n: "Crescimento visível" },
+                { t: "Dia 45", v: `+${gain}cm`, n: "Resultado completo" },
               ].map((m) => (
                 <div
                   key={m.t}
@@ -963,7 +960,7 @@ function ResultsScreen({
                 <div className="flex items-start gap-3">
                   <img
                     src={t.avatar}
-                    alt={`Foto de ${t.name}`}
+                    alt={`Avatar de ${t.name}`}
                     width={56}
                     height={56}
                     loading="lazy"
@@ -1038,10 +1035,10 @@ function ResultsScreen({
           </button>
 
           <div className="flex items-center justify-center gap-3 text-xs flex-wrap" style={{ color: "#5e7d9f" }}>
-            <span className="flex items-center gap-1"><LockIcon className="w-3 h-3" /> Checkout seguro</span>
+            <span className="flex items-center gap-1"><LockIcon className="w-3 h-3" /> Pagamento seguro</span>
             <span>·</span><span>Cobrança discreta</span>
-            <span>·</span><span>Acesso imediato</span>
-            <span>·</span><span>Preço em Real</span>
+            <span>·</span><span>Entrega para todo o Brasil</span>
+            <span>·</span><span>Preços em BRL</span>
           </div>
 
           <div
@@ -1060,7 +1057,7 @@ function ResultsScreen({
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
-export default function BrasilQuiz() {
+export default function IrelandQuiz() {
   useFbPixel()
   usePrefetchSlides()
 
