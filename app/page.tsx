@@ -348,7 +348,7 @@ const Header = memo(function Header() {
         className="text-[26px] sm:text-[32px] font-extrabold text-white uppercase leading-tight"
         style={{ fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.5px" }}
       >
-        Protocolo Congolés
+        Protocolo Congoleño
       </h1>
       <p
         className="text-[10px] tracking-widest uppercase mt-1"
@@ -403,7 +403,7 @@ function LightbulbIcon({ className = "" }: { className?: string }) {
   )
 }
 
-// ─── Pantalla del Quiz ───────────────────────────────────────────────────────
+// ─── Pantalla del Quiz ───────────────────────────���───────────────────────────
 const ProgressBar = memo(function ProgressBar({ step }: { step: number }) {
   const pct = Math.round((step / TOTAL_Q) * 100)
   return (
@@ -837,7 +837,7 @@ function ResultsScreen({
               {protocolName}
             </div>
             <div className="text-sm mt-0.5" style={{ color: "#669ef3" }}>
-              Protocolo Congolés + Entrenamiento Kegel · Calibrado para {ageLabel}
+              Protocolo Congoleño + Entrenamiento Kegel · Calibrado para {ageLabel}
             </div>
           </div>
 
