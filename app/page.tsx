@@ -737,19 +737,19 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
 // ─── Pantalla de Resultados ──────────────────────────────────────────────────
 const TESTIMONIALS = [
   {
-    name: "Carlos M.", location: "Sevilla", age: 34, gain: "+3,7 cm",
-    text: "Os felicito por lo que estáis ofreciendo. Mi inseguridad me tenía encerrado. Solo salía para ganar dinero, que después gastaba en cosas que no funcionaban — pastillas, bombas y pesas. Poner tu método en práctica fue como volver a la vida. Lo explicas todo de forma tan sencilla y clara…",
-    avatar: `${AVT_CDN}/t-carlos-MFpfh0uYLjKM4F1SPcbnuQKjCo44EA.png`,
+    name: "Carlos M.", location: "Sevilla", age: 34, gain: "+3,8 cm",
+    avatar: `${AVT_CDN}/perfil-homem-1-l7FyTNhxqK5SaLUTZjCLqtE7sgtRWV.webp`,
+    quote: "Nunca pensé que vería resultados reales. Mi pareja notó la diferencia enseguida.",
   },
   {
-    name: "Diego R.", location: "Madrid", age: 38, gain: "+3,7 cm",
-    text: "Te estoy muy agradecido. ¡Pero mi mujer lo está aún más! Salvaste mi matrimonio. El cambio fue increíble, muy notable y más rápido de lo que pensaba. De 15 a 18,7 centímetros, y el grosor de 11 a 12,8 centímetros. Mi mujer se lo está pasando como nunca. ¡Y gracias a ti, es conmigo! De verdad me liberaste de un problema enorme. ¡Gracias, tío!",
-    avatar: `${AVT_CDN}/t-roberto-2Rp5y8EWVWsiZMO2qU5P11CwfCjyiI.png`,
+    name: "Diego R.", location: "Madrid", age: 38, gain: "+3,9 cm",
+    avatar: `${AVT_CDN}/perfil-homem-2-0sIhUJYdJixqD7XZ0pxNiA3sPTYvBB.webp`,
+    quote: "Sencillo de seguir y sin efectos secundarios. Muy contento con los resultados.",
   },
   {
-    name: "Sergio F.", location: "Valencia", age: 42, gain: "+4,2 cm",
-    text: "Fueron unos meses duros. Mi mujer Paula me dejó después de 7 años de matrimonio. No la culpo — llevábamos más de un año sin una relación íntima de verdad… Volver a estar soltero con la confianza por los suelos me estaba metiendo en una depresión. Probé un montón de cosas, pero solo conseguí dolor y dinero tirado. Un amigo me recomendó tu sistema y tenía mis dudas, pero sin nada que perder seguí tus instrucciones… Ahora no solo soy más grande, sino más duro y aguanto más tiempo. En 2 meses he estado con 5 mujeres nuevas, ¡y cada una tuvo experiencias explosivas! Por lo visto mi ex se enteró y ahora quiere volver conmigo…",
-    avatar: `${AVT_CDN}/t-jorge-378PxPddkBoypl3foZkPdOHRRwiEqb.png`,
+    name: "Sergio F.", location: "Valencia", age: 42, gain: "+4,0 cm",
+    avatar: `${AVT_CDN}/perfil-homem-3-9kAExqkHb9cPMFJQTNDHIQnmSx62I2.webp`,
+    quote: "A mi edad no esperaba cambios así. El protocolo funciona de verdad.",
   },
 ]
 
@@ -1161,7 +1161,7 @@ export default function SpainQuiz() {
         <ResultsScreen
           answers={s.answers}
           height={s.height}
-          onCTA={() => window.open("https://pay.wiapy.com/1kMSJdYl0", "_blank")}
+          onCTA={() => window.open("https://pay.hotmart.com/U104868943B?off=n8cjjaa1&checkoutMode=10", "_blank")}
         />
       </>
     )
