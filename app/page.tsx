@@ -39,6 +39,10 @@ function GlobalStyles() {
   return (
     <style dangerouslySetInnerHTML={{
       __html: `
+        * {
+          -webkit-tap-highlight-color: transparent;
+        }
+
         @keyframes pulse-border {
           0%, 100% { box-shadow: 0 0 0 0 rgba(2, 95, 222, 0.4); }
           50% { box-shadow: 0 0 0 8px rgba(2, 95, 222, 0); }
@@ -79,9 +83,18 @@ function GlobalStyles() {
           border-radius: 8px;
           text-align: left;
           cursor: pointer;
+          touch-action: manipulation;
+          user-select: none;
+          -webkit-user-select: none;
           transition: transform .18s, background-color .18s, border-color .18s, color .18s, font-weight .18s;
         }
+        .opt-btn:active:not(:disabled):not([data-selected="true"]) {
+          transform: scale(0.98);
+          background: #f0f5ff;
+          border-color: #025fde;
+        }
         @media (hover: hover) {
+
           .opt-btn:hover:not(:disabled):not([data-selected="true"]) {
             color: #003466;
             background: #f0f5ff;
@@ -117,9 +130,21 @@ function GlobalStyles() {
           background: #36c57c;
         }
 
-        .cta-btn { transition: transform .18s, box-shadow .18s; }
+        .cta-btn {
+          touch-action: manipulation;
+          user-select: none;
+          -webkit-user-select: none;
+          transition: transform .18s, box-shadow .18s;
+        }
+        .cta-btn:active:not(:disabled) {
+          transform: scale(0.98);
+        }
         @media (hover: hover) {
           .cta-btn:hover:not(:disabled) { transform: translateY(-2px); }
+        }
+
+        button, input[type="range"] {
+          touch-action: manipulation;
         }
       `
     }} />
@@ -301,7 +326,7 @@ const STEPS: Step[] = [
     q: "¿Cómo describirías honestamente tu alimentación?",
     hint: "La nutrición impulsa la expansión del tejido a nivel celular",
     opts: [
-      "Sobre todo comida rápida y picoteo",
+      "Sobre todo comida rápida y procesada",
       "Mitad y mitad — depende del día",
       "Comidas generalmente equilibradas",
       "Comida natural y sin procesar la mayor parte del tiempo",
@@ -322,9 +347,9 @@ const STEPS: Step[] = [
   },
   {
     kind: "h",
-    id: "pencil",
-    q: "¿Cuál es el tamaño de tu lápiz?",
-    hint: "Se usa para calibrar tu protocolo personalizado",
+    id: "height",
+    q: "¿Cuál es tu altura?",
+    hint: "Se usa para ajustar tu línea base hormonal",
   },
 ]
 
@@ -332,19 +357,17 @@ const TOTAL_Q = STEPS.filter((s) => s.kind === "q").length
 
 // ─── Lógica de Resultados ────────────────────────────────────────────────────
 const calcGain = (a: Record<number, string>): number => {
-  let g = 3.0
-  if (a[0]?.includes("18")) g += 0.9
-  else if (a[0]?.includes("26")) g += 0.6
-  else if (a[0]?.includes("36")) g += 0.3
-  if (a[2] === "Todas las mañanas sin falta") g += 0.3
-  else if (a[2] === "La mayoría de las mañanas") g += 0.2
-  if (a[5]?.includes("4 o más")) g += 0.2
-  else if (a[5]?.includes("2 – 3")) g += 0.1
-  if (a[6]?.includes("natural") || a[6]?.includes("equilibradas")) g += 0.2
-  if (a[4]?.includes("8 horas") || a[4]?.includes("6 – 7")) g += 0.1
-  // Limitado entre 3,5 cm y 4,0 cm
-  const clamped = Math.max(3.5, Math.min(4.0, g))
-  return Math.round(clamped * 10) / 10
+  let g = 3.9
+  if (a[0]?.includes("18")) g += 1.1
+  else if (a[0]?.includes("26")) g += 0.7
+  else if (a[0]?.includes("36")) g += 0.4
+  if (a[2] === "Todas las mañanas sin falta") g += 0.7
+  else if (a[2] === "La mayoría de las mañanas") g += 0.4
+  if (a[5]?.includes("4 o más")) g += 0.5
+  else if (a[5]?.includes("2 – 3")) g += 0.3
+  if (a[6]?.includes("natural") || a[6]?.includes("equilibradas")) g += 0.4
+  if (a[4]?.includes("8 horas") || a[4]?.includes("6 – 7")) g += 0.3
+  return Math.min(7.5, Math.round(g * 10) / 10)
 }
 
 const baseSize = (a: Record<number, string>): number => {
@@ -429,7 +452,7 @@ function LightbulbIcon({ className = "" }: { className?: string }) {
   )
 }
 
-// ─── Pantalla del Quiz ───────────────────────────���───────────────────────────
+// ─── Pantalla del Quiz ───────────────────────────────────────────────────────
 const ProgressBar = memo(function ProgressBar({ step }: { step: number }) {
   const pct = Math.round((step / TOTAL_Q) * 100)
   return (
@@ -488,8 +511,8 @@ const OptionBtn = memo(function OptionBtn({
         userSelect: "none",
       }}
     >
-      <span className="leading-snug">{value}</span>
-      <span className="opt-radio">
+      <span className="leading-snug pointer-events-none">{value}</span>
+      <span className="opt-radio pointer-events-none">
         {selected && (
           <svg
             viewBox="0 0 24 24" fill="none" stroke="#fff"
@@ -514,25 +537,25 @@ function HeightStep({
   onFt: (v: number) => void; onIn: (v: number) => void
   onContinue: () => void
 }) {
-  const valid = unit === "cm" ? height >= 8 && height <= 22 : inchVal >= 3 && inchVal <= 9
+  const valid = unit === "cm" ? height >= 140 && height <= 225 : feetVal * 12 + inchVal >= 54
 
   return (
     <div className="space-y-5">
       <div className="flex justify-center">
         <div className="inline-flex p-1 gap-1" style={{ backgroundColor: "#f3f4f6", borderRadius: "6px" }}>
-          {(["cm", "in"] as const).map((u) => (
+          {(["cm", "ft"] as const).map((u) => (
             <button
               key={u}
               type="button"
-              onClick={() => onUnit(u === "in" ? "ft" : "cm")}
+              onClick={() => onUnit(u)}
               className="px-5 py-1.5 text-sm font-bold transition-all"
               style={{
                 borderRadius: "4px",
-                backgroundColor: (u === "cm" && unit === "cm") || (u === "in" && unit === "ft") ? "#003466" : "transparent",
-                color: (u === "cm" && unit === "cm") || (u === "in" && unit === "ft") ? "#fff" : "#5e7d9f",
+                backgroundColor: u === unit ? "#003466" : "transparent",
+                color: u === unit ? "#fff" : "#5e7d9f",
               }}
             >
-              {u === "cm" ? "cm" : "pulgadas"}
+              {u === "cm" ? "cm" : "ft / in"}
             </button>
           ))}
         </div>
@@ -552,14 +575,14 @@ function HeightStep({
             </div>
             <div className="text-sm mb-5" style={{ color: "#5e7d9f" }}>centímetros</div>
             <input
-              type="range" min={8} max={22} value={height}
+              type="range" min={140} max={225} value={height}
               onChange={(e) => onHeight(+e.target.value)}
               className="w-full cursor-pointer"
               style={{ accentColor: "#003466" }}
-              aria-label="Tamaño en centímetros"
+              aria-label="Altura en centímetros"
             />
             <div className="flex justify-between text-xs mt-1.5" style={{ color: "#9ca3af" }}>
-              <span>8 cm</span><span>22 cm</span>
+              <span>140 cm</span><span>225 cm</span>
             </div>
           </>
         ) : (
@@ -568,18 +591,30 @@ function HeightStep({
               className="text-6xl font-extrabold tabular-nums"
               style={{ color: "#003466", fontFamily: "'Montserrat', sans-serif" }}
             >
-              {inchVal}&quot;
+              {feetVal}&apos;{inchVal}&quot;
             </div>
-            <div className="text-sm mb-5" style={{ color: "#5e7d9f" }}>{Math.round(inchVal * 2.54)} cm</div>
-            <input
-              type="range" min={3} max={9} value={inchVal}
-              onChange={(e) => onIn(+e.target.value)}
-              className="w-full cursor-pointer"
-              style={{ accentColor: "#003466" }}
-              aria-label="Tamaño en pulgadas"
-            />
-            <div className="flex justify-between text-xs mt-1.5" style={{ color: "#9ca3af" }}>
-              <span>3 in</span><span>9 in</span>
+            <div className="text-sm mb-5" style={{ color: "#5e7d9f" }}>{height} cm</div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <div className="text-xs mb-1 font-medium" style={{ color: "#5e7d9f" }}>Pies (4 – 7)</div>
+                <input
+                  type="range" min={4} max={7} value={feetVal}
+                  onChange={(e) => onFt(+e.target.value)}
+                  className="w-full cursor-pointer"
+                  style={{ accentColor: "#003466" }}
+                  aria-label="Altura en pies"
+                />
+              </div>
+              <div>
+                <div className="text-xs mb-1 font-medium" style={{ color: "#5e7d9f" }}>Pulgadas (0 – 11)</div>
+                <input
+                  type="range" min={0} max={11} value={inchVal}
+                  onChange={(e) => onIn(+e.target.value)}
+                  className="w-full cursor-pointer"
+                  style={{ accentColor: "#003466" }}
+                  aria-label="Altura en pulgadas"
+                />
+              </div>
             </div>
           </>
         )}
@@ -681,6 +716,7 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
                 />
               </div>
             ))}
+            {/* Indicadores de slide */}
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
               {SLIDES.map((_, i) => (
                 <div
@@ -736,6 +772,15 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
               {Math.round(progress)}%
             </div>
             <div className="text-sm mt-1" style={{ color: "#5e7d9f" }}>Análisis en curso</div>
+            <div className="mt-4 h-2.5 rounded-full overflow-hidden mx-8" style={{ backgroundColor: "#e5e7eb" }}>
+              <div
+                className="h-full rounded-full transition-all duration-500 relative"
+                style={{
+                  width: `${progress}%`,
+                  background: `linear-gradient(90deg, #003466 0%, #003466 ${Math.max(0, 100 - (15 / progress * 100))}%, #36c57c 100%)`,
+                }}
+              />
+            </div>
           </div>
         </div>
 
@@ -752,18 +797,18 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
 const TESTIMONIALS = [
   {
     name: "Carlos M.", location: "Sevilla", age: 34, gain: "+3,7 cm",
+    text: "Os felicito por lo que ofrecéis. Mi inseguridad me tenía encerrado. Solo salía a ganar dinero, que luego gastaba en cosas que no funcionaban — pastillas, bombas y pesas. Poner vuestro método en práctica fue como volver a vivir. Lo explicáis todo de forma tan sencilla y clara...",
     avatar: `${AVT_CDN}/perfil-homem-1-l7FyTNhxqK5SaLUTZjCLqtE7sgtRWV.webp`,
-    quote: "Nunca pensé que vería resultados reales. Mi pareja notó la diferencia enseguida.",
   },
   {
     name: "Diego R.", location: "Madrid", age: 38, gain: "+3,7 cm",
+    text: "Estoy muy agradecido con vosotros. ¡Pero mi mujer lo está aún más! Habéis salvado mi matrimonio. El cambio fue increíble, muy notable y más rápido de lo que esperaba. De 15 a 18,7 centímetros, y el grosor de 11 a 12,8 centímetros. Mi mujer está disfrutando como nunca. Y gracias a vosotros, ¡es conmigo! De verdad me liberasteis de un problema enorme. ¡Gracias, tíos!",
     avatar: `${AVT_CDN}/perfil-homem-2-0sIhUJYdJixqD7XZ0pxNiA3sPTYvBB.webp`,
-    quote: "Sencillo de seguir y sin efectos secundarios. Muy contento con los resultados.",
   },
   {
     name: "Sergio F.", location: "Valencia", age: 42, gain: "+4,2 cm",
+    text: "Fueron unos meses muy duros. Mi mujer Paula me dejó después de 7 años de matrimonio. No se lo reprocho — llevábamos más de un año sin una relación íntima de verdad... Volver a estar soltero sin ninguna confianza me estaba llevando a la depresión. Probé muchas cosas, pero solo conseguí dolor y dinero perdido. Un amigo me recomendó vuestro sistema y tuve mis dudas, pero sin nada que perder seguí vuestras indicaciones... Ahora no solo soy más grande, sino más firme y duradero. En 2 meses he estado con 5 mujeres nuevas, ¡y cada una tuvo experiencias explosivas! Al parecer mi ex se enteró y ahora quiere volver...",
     avatar: `${AVT_CDN}/perfil-homem-3-9kAExqkHb9cPMFJQTNDHIQnmSx62I2.webp`,
-    quote: "A mi edad no esperaba cambios así. El protocolo funciona de verdad.",
   },
 ]
 
@@ -775,7 +820,7 @@ function ResultsScreen({
   const gain = calcGain(answers)
   const current = baseSize(answers)
   const target = +(current + gain).toFixed(1)
-  const [secs, setSecs] = useState(7 * 60 + 59)
+  const [secs, setSecs] = useState(14 * 60 + 59)
   const [spots, setSpots] = useState(3)
 
   const protocolName =
@@ -865,7 +910,7 @@ function ResultsScreen({
                 borderRadius: "8px",
               }}
             >
-              <div className="text-sm mb-1" style={{ color: "#5e7d9f" }}>Tu ganancia proyectada en 60 días</div>
+              <div className="text-sm mb-1" style={{ color: "#5e7d9f" }}>Tu ganancia proyectada en 45 días</div>
               <div
                 className="text-7xl font-extrabold leading-none"
                 style={{ color: "#003466", fontFamily: "'Montserrat', sans-serif" }}
@@ -880,7 +925,7 @@ function ResultsScreen({
             {/* Visualizador de tamaño */}
             <div>
               <div className="flex justify-between text-xs font-bold uppercase tracking-wide mb-2" style={{ color: "#5e7d9f" }}>
-                <span>Ahora</span><span>Día 60</span>
+                <span>Ahora</span><span>Día 45</span>
               </div>
               <div className="relative h-6 rounded-full overflow-hidden" style={{ backgroundColor: "#f3f4f6" }}>
                 <div
@@ -901,8 +946,8 @@ function ResultsScreen({
             <div className="grid grid-cols-3 gap-2.5">
               {[
                 { t: "Semana 2", v: `+${formatDec(+(gain * 0.28).toFixed(1))} cm`, n: "Primeros cambios" },
-                { t: "Día 30", v: `+${formatDec(+(gain * 0.58).toFixed(1))} cm`, n: "Crecimiento visible" },
-                { t: "Día 60", v: `+${formatDec(gain)} cm`, n: "Resultado final" },
+                { t: "Día 21", v: `+${formatDec(+(gain * 0.58).toFixed(1))} cm`, n: "Crecimiento visible" },
+                { t: "Día 45", v: `+${formatDec(gain)} cm`, n: "Resultado final" },
               ].map((m) => (
                 <div
                   key={m.t}
@@ -924,6 +969,7 @@ function ResultsScreen({
             {/* Beneficios */}
             <div className="space-y-2.5 pt-1">
               {[
+                "Aumenta longitud y grosor de forma natural — sin dispositivos",
                 "Erecciones más fuertes y duraderas",
                 "Técnicas Kegel avanzadas para resistencia y control",
                 "Primeros resultados visibles en 14 días",
@@ -951,7 +997,7 @@ function ResultsScreen({
             className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-center mb-3"
             style={{ color: "#5e7d9f", fontFamily: "'Montserrat', sans-serif" }}
           >
-            Resultados reales de hombres como tú
+            Resultados reales de hombres en España
           </div>
           <div className="space-y-3">
             {TESTIMONIALS.map((t, idx) => (
@@ -1046,8 +1092,8 @@ function ResultsScreen({
           <div className="flex items-center justify-center gap-3 text-xs flex-wrap" style={{ color: "#5e7d9f" }}>
             <span className="flex items-center gap-1"><LockIcon className="w-3 h-3" /> Pago seguro</span>
             <span>·</span><span>Facturación discreta</span>
-            <span>·</span><span>Envío a todo el mundo</span>
-            <span>·</span><span>Precio según tu país</span>
+            <span>·</span><span>Envío a toda España</span>
+            <span>·</span><span>Precio en EUR</span>
           </div>
 
           <div
@@ -1075,10 +1121,10 @@ export default function SpainQuiz() {
     stepIndex: 0,
     answers: {},
     loadProgress: 0,
-    height: 13,
+    height: 175,
     heightUnit: "cm",
     feetVal: 5,
-    inchVal: 5,
+    inchVal: 9,
   })
 
   const loadInterval = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -1120,7 +1166,7 @@ export default function SpainQuiz() {
     })
     if (typeof window !== "undefined") {
       requestAnimationFrame(() => {
-        try { window.scrollTo({ top: 0, behavior: "auto" }) } catch { window.scrollTo(0, 0) }
+        try { window.scrollTo({ top: 0, behavior: "smooth" }) } catch { window.scrollTo(0, 0) }
       })
     }
   }, [startLoad])
@@ -1140,7 +1186,7 @@ export default function SpainQuiz() {
     })
     if (typeof window !== "undefined") {
       requestAnimationFrame(() => {
-        try { window.scrollTo({ top: 0, behavior: "auto" }) } catch { window.scrollTo(0, 0) }
+        try { window.scrollTo({ top: 0, behavior: "smooth" }) } catch { window.scrollTo(0, 0) }
       })
     }
   }, [startLoad])
