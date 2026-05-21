@@ -1161,7 +1161,7 @@ export default function SpainQuiz() {
         <ResultsScreen
           answers={s.answers}
           height={s.height}
-          onCTA={() => window.open("https://pay.wiapy.com/1kMSJdYl0", "_blank")}
+          onCTA={() => window.open("https://pay.hotmart.com/U104868943B?off=n8cjjaa1&checkoutMode=10", "_blank")}
         />
       </>
     )
