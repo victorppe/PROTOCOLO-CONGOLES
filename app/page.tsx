@@ -2,26 +2,22 @@
 
 import { useState, useCallback, useEffect, useRef, memo } from "react"
 
-// ─── CDN constants (used for preconnect) ──────────────────────────────────────
+// ─── Constantes de CDN (usadas para preconnect) ──────────────────────────────
 const IMG_CDN = "https://metodotripe.shop"
 const VID_CDN = "https://institutoduramax.com"
 const AVT_CDN = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com"
 
-// ─── Slideshow data (kept top-level so we can preload the first one) ──────────
+// ─── Datos del slideshow — solo 3 fotos, sin texto superpuesto ───────────────
 const SLIDES = [
-  { src: `${IMG_CDN}/wp-content/uploads/2026/02/02-.jpg`,
-    label: "Paciente R.S. — +5,2cm · Verificado" },
-  { src: `${IMG_CDN}/wp-content/uploads/2026/01/22109742.jpg`,
-    label: "Paciente M.L. — +6,1cm · Verificado" },
-  { src: `${IMG_CDN}/wp-content/uploads/2026/02/PACIENTE-H-2990-ANTES-E-DEPOIS-1-1-scaled-1.webp`,
-    label: "Paciente H.L. — +4,8cm · Verificado" },
-  { src: `${IMG_CDN}/wp-content/uploads/2026/02/daf6ef_d639bfc5b0a34189b18c48e3f54f2763_mv2-1.png`,
-    label: "Paciente A.C. — +5,7cm · Verificado" },
-  { src: `${IMG_CDN}/wp-content/uploads/2026/02/7564b4c41b95c4d46ca0_-_94d8bd698ca2c759ce37_-_inserir-um-titulo.jpg`,
-    label: "Paciente J.G. — +4,3cm · Verificado" },
+  { src: `${IMG_CDN}/wp-content/uploads/2026/02/02-.jpg` },
+  { src: `${IMG_CDN}/wp-content/uploads/2026/01/22109742.jpg` },
+  { src: `${IMG_CDN}/wp-content/uploads/2026/02/PACIENTE-H-2990-ANTES-E-DEPOIS-1-1-scaled-1.webp` },
 ] as const
 
-// ─── Resource Hints + Fonts ───────────────────────────────────────────────────
+// ─── Helpers de formato ──────────────────────────────────────────────────────
+const formatDec = (n: number) => String(n).replace(".", ",")
+
+// ─── Resource Hints + Fuentes ────────────────────────────────────────────────
 function ResourceHints() {
   return (
     <>
@@ -62,10 +58,9 @@ function GlobalStyles() {
         }
         .animate-pulse-border { animation: pulse-border 0.6s ease-out; }
         .animate-check-in { animation: check-in 0.2s ease-out forwards; }
-        .animate-slide-up { animation: slide-up 0.25s ease-out forwards; }
+        .animate-slide-up { animation: slide-up 0.25s ease-out forwards; will-change: transform, opacity; }
         .animate-progress-glow { animation: progress-glow 2s ease-in-out infinite; }
 
-        /* iOS / iPhone XR fixes: ensure taps register reliably */
         html, body { -webkit-text-size-adjust: 100%; }
 
         .opt-btn {
@@ -126,16 +121,12 @@ function GlobalStyles() {
         @media (hover: hover) {
           .cta-btn:hover:not(:disabled) { transform: translateY(-2px); }
         }
-        @media (hover: hover) {
-          .cta-btn:hover:not(:disabled) { transform: translateY(-2px); }
-        }
       `
     }} />
   )
 }
 
 // ─── Tracking ─────────────────────────────────────────────────────────────────
-
 const loadFbPixel = () => {
   if (typeof window === "undefined" || (window as any).fbq) return
   const f = window as any
@@ -164,8 +155,7 @@ const useFbPixel = () => {
   }, [])
 }
 
-// ─── Prefetch slideshow ───────────────────────────────────────────────────────
-
+// ─── Prefetch de las imágenes del slideshow ──────────────────────────────────
 const usePrefetchSlides = () => {
   useEffect(() => {
     if (typeof window === "undefined") return
@@ -185,8 +175,7 @@ const usePrefetchSlides = () => {
   }, [])
 }
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
+// ─── Tipos ────────────────────────────────────────────────────────────────────
 type Screen = "quiz" | "loading" | "results"
 
 interface State {
@@ -200,8 +189,7 @@ interface State {
   inchVal: number
 }
 
-// ─── Quiz Content ─────────────────────────────────────────────────────────────
-
+// ─── Contenido del Quiz ──────────────────────────────────────────────────────
 type Step =
   | { kind: "q"; id: string; q: string; hint: string; opts: readonly string[]; note?: string }
   | { kind: "h"; id: string; q: string; hint: string }
@@ -211,41 +199,46 @@ const STEPS: Step[] = [
   {
     kind: "q",
     id: "age",
-    q: "¿Cuántos años tienes?",
+    q: "¿Qué edad tienes?",
     hint: "Esto determina tu ventana de crecimiento y la intensidad del protocolo",
     opts: ["18 – 25", "26 – 35", "36 – 50", "51 – 65"],
   },
   {
     kind: "q",
     id: "goal",
-    q: "¿Cuál es tu principal objetivo ahora?",
-    hint: "Vamos a diseñar tu plan en torno a esto",
+    q: "¿Cuál es tu objetivo principal ahora mismo?",
+    hint: "Construiremos tu plan en torno a esto",
     opts: [
       "Aumentar el tamaño — longitud y grosor",
       "Durar más y mejorar la resistencia",
       "Erecciones más fuertes y firmes",
-      "Todas las opciones anteriores",
+      "Todo lo anterior",
     ],
   },
   {
     kind: "q",
     id: "erections",
     q: "¿Con qué frecuencia te despiertas con erección matutina?",
-    hint: "Un indicador clave de la salud de la testosterona y del flujo sanguíneo",
+    hint: "Un indicador clave de la salud de tu testosterona y flujo sanguíneo",
     note: "Las erecciones matutinas son el indicador más claro de la producción de testosterona y de la salud arterial.",
-    opts: ["Casi nunca", "Rara vez — una o dos veces por semana", "La mayoría de las mañanas", "Todas las mañanas sin excepción"],
+    opts: [
+      "Casi nunca",
+      "Rara vez — una o dos veces por semana",
+      "La mayoría de las mañanas",
+      "Todas las mañanas sin falta",
+    ],
   },
   {
     kind: "info",
     id: "info1",
     title: "La debilidad del suelo pélvico puede ser la causa invisible detrás de la eyaculación precoz",
     video: `${VID_CDN}/wp-content/uploads/2025/05/Assoalho-Pelvico-2.mp4`,
-    quote: "La tensión crónica o la debilidad de los músculos pélvicos puede hacer que la eyaculación sea automática e incontrolable.",
+    quote: "La tensión crónica o la debilidad de los músculos pélvicos pueden hacer que la eyaculación sea automática e incontrolable.",
   },
   {
     kind: "q",
     id: "size",
-    q: "¿Cuál es tu longitud erecta actual?",
+    q: "¿Cuál es tu longitud actual en erección?",
     hint: "Sé honesto — tus resultados son completamente privados",
     opts: [
       "Menos de 12 cm",
@@ -257,47 +250,47 @@ const STEPS: Step[] = [
   {
     kind: "q",
     id: "sleep",
-    q: "¿Cuántas horas de sueño sueles tener por noche?",
-    hint: "El sueño es cuando se produce la testosterona — importa más de lo que imaginas",
-    note: "Hasta el 70% de la testosterona diaria se produce durante el sueño profundo. Menos de 6 horas puede reducir tu potencial de crecimiento a la mitad.",
+    q: "¿Cuántas horas sueles dormir?",
+    hint: "El sueño es cuando se produce la testosterona — importa más de lo que crees",
+    note: "Hasta el 70% de la testosterona diaria se produce durante el sueño profundo. Menos de 6 horas puede reducir tu potencial de crecimiento casi a la mitad.",
     opts: ["Menos de 5 horas", "5 – 6 horas", "6 – 7 horas", "8 horas o más"],
   },
   {
     kind: "q",
     id: "exercise",
-    q: "¿Con qué frecuencia haces ejercicio por semana?",
-    hint: "La actividad física estimula directamente la producción de hormona del crecimiento",
+    q: "¿Con qué frecuencia haces ejercicio a la semana?",
+    hint: "La actividad física estimula directamente la producción de la hormona del crecimiento",
     opts: ["Rara vez o nunca", "Una vez por semana", "2 – 3 veces por semana", "4 o más veces por semana"],
   },
   {
     kind: "info",
     id: "info2",
-    title: "El control eyaculatorio está directamente ligado a la fuerza de los músculos del suelo pélvico",
+    title: "El control eyaculatorio está directamente ligado a la fuerza del suelo pélvico",
     video: `${VID_CDN}/wp-content/uploads/2025/05/Assoalho-Pelvico-1.mp4`,
-    quote: "Fortalecer estos músculos permite mejor control del reflejo eyaculatorio y mayor retención de sangre.",
+    quote: "Fortalecer estos músculos permite un mejor control del reflejo eyaculatorio y una mayor retención sanguínea.",
   },
   {
     kind: "q",
     id: "diet",
     q: "¿Cómo describirías honestamente tu alimentación?",
-    hint: "La nutrición alimenta la expansión tisular a nivel celular",
+    hint: "La nutrición impulsa la expansión del tejido a nivel celular",
     opts: [
-      "Principalmente comida rápida y snacks",
+      "Sobre todo comida rápida y picoteo",
       "Mitad y mitad — depende del día",
       "Comidas generalmente equilibradas",
-      "Alimentación limpia y natural la mayor parte del tiempo",
+      "Comida natural y sin procesar la mayor parte del tiempo",
     ],
   },
   {
     kind: "q",
     id: "tried",
-    q: "¿Has probado algún método natural de aumento antes?",
-    hint: "Esto determina por dónde empezamos tu protocolo",
-    note: "Las bombas y pesas causan microlesiones que bloquean el crecimiento. Tu protocolo comienza con una fase de recuperación, si es necesario.",
+    q: "¿Has probado antes algún método natural de mejora?",
+    hint: "Esto determina dónde empezamos tu protocolo",
+    note: "Las bombas y las pesas provocan microlesiones que bloquean el crecimiento. Si es necesario, tu protocolo comienza con una fase de recuperación.",
     opts: [
-      "No — nunca había oído hablar",
-      "He oído hablar pero nunca lo he intentado",
-      "Lo intenté, pero no fui constante",
+      "No — nunca había oído hablar de uno",
+      "He oído hablar pero nunca lo probé",
+      "Lo probé pero no fui constante",
       "Sí — pero vi pocos o ningún resultado",
     ],
   },
@@ -305,30 +298,31 @@ const STEPS: Step[] = [
     kind: "h",
     id: "height",
     q: "¿Cuál es tu altura?",
-    hint: "Se utiliza para ajustar tu línea base hormonal",
+    hint: "Se usa para afinar tu línea base hormonal",
   },
 ]
 
 const TOTAL_Q = STEPS.filter((s) => s.kind === "q").length
 
-// ─── Result Logic ─────────────────────────────────────────────────────────────
-
+// ─── Lógica de Resultados ────────────────────────────────────────────────────
 const calcGain = (a: Record<number, string>): number => {
-  let g = 3.9
-  if (a[0]?.includes("18")) g += 1.1
-  else if (a[0]?.includes("26")) g += 0.7
-  else if (a[0]?.includes("36")) g += 0.4
-  if (a[2] === "Todas las mañanas sin excepción") g += 0.7
-  else if (a[2] === "La mayoría de las mañanas") g += 0.4
-  if (a[5]?.includes("4 o más")) g += 0.5
-  else if (a[5]?.includes("2 – 3")) g += 0.3
-  if (a[6]?.includes("limpia") || a[6]?.includes("equilibradas")) g += 0.4
-  if (a[4]?.includes("8 horas") || a[4]?.includes("6 – 7")) g += 0.3
-  return Math.min(7.5, Math.round(g * 10) / 10)
+  let g = 3.0
+  if (a[0]?.includes("18")) g += 0.9
+  else if (a[0]?.includes("26")) g += 0.6
+  else if (a[0]?.includes("36")) g += 0.3
+  if (a[2] === "Todas las mañanas sin falta") g += 0.3
+  else if (a[2] === "La mayoría de las mañanas") g += 0.2
+  if (a[5]?.includes("4 o más")) g += 0.2
+  else if (a[5]?.includes("2 – 3")) g += 0.1
+  if (a[6]?.includes("natural") || a[6]?.includes("equilibradas")) g += 0.2
+  if (a[4]?.includes("8 horas") || a[4]?.includes("6 – 7")) g += 0.1
+  // Limitado entre 3,5 cm y 4,0 cm
+  const clamped = Math.max(3.5, Math.min(4.0, g))
+  return Math.round(clamped * 10) / 10
 }
 
 const baseSize = (a: Record<number, string>): number => {
-  if (a[3]?.includes("Menos de 12")) return 11
+  if (a[3]?.includes("Menos")) return 11
   if (a[3]?.includes("12 – 14")) return 13
   if (a[3]?.includes("14 – 16")) return 15
   return 17
@@ -337,8 +331,7 @@ const baseSize = (a: Record<number, string>): number => {
 const fmt = (s: number) =>
   `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`
 
-// ─── Shared UI ────────────────────────────────────────────────────────────────
-
+// ─── UI Compartida ───────────────────────────────────────────────────────────
 const Header = memo(function Header() {
   return (
     <header
@@ -355,13 +348,13 @@ const Header = memo(function Header() {
         className="text-[26px] sm:text-[32px] font-extrabold text-white uppercase leading-tight"
         style={{ fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.5px" }}
       >
-        Protocolo Congoleño
+        Protocolo Congolés
       </h1>
       <p
         className="text-[10px] tracking-widest uppercase mt-1"
         style={{ color: "#669ef3" }}
       >
-        Sistema Natural de Crecimiento
+        Sistema de Crecimiento Natural
       </p>
     </header>
   )
@@ -410,8 +403,7 @@ function LightbulbIcon({ className = "" }: { className?: string }) {
   )
 }
 
-// ─── Quiz Screen ──────────────────────────────────────────────────────────────
-
+// ─── Pantalla del Quiz ───────────────────────────────────────────────────────
 const ProgressBar = memo(function ProgressBar({ step }: { step: number }) {
   const pct = Math.round((step / TOTAL_Q) * 100)
   return (
@@ -447,7 +439,6 @@ const OptionBtn = memo(function OptionBtn({
     if (timerRef.current) clearTimeout(timerRef.current)
   }, [])
 
-  // Universal handler for all devices including iPhone XR
   const handleInteraction = useCallback(() => {
     if (firedRef.current || selected) return
     firedRef.current = true
@@ -462,8 +453,8 @@ const OptionBtn = memo(function OptionBtn({
       onPointerDown={handleInteraction}
       data-selected={selected ? "true" : "false"}
       className={`opt-btn animate-slide-up ${selected ? "animate-pulse-border" : ""}`}
-      style={{ 
-        animationDelay: `${index * 50}ms`, 
+      style={{
+        animationDelay: `${index * 50}ms`,
         animationFillMode: "both",
         touchAction: "manipulation",
         WebkitTapHighlightColor: "transparent",
@@ -515,7 +506,7 @@ function HeightStep({
                 color: u === unit ? "#fff" : "#5e7d9f",
               }}
             >
-              {u === "cm" ? "cm" : "pies / pulg"}
+              {u === "cm" ? "cm" : "pies / plg"}
             </button>
           ))}
         </div>
@@ -556,7 +547,7 @@ function HeightStep({
             <div className="text-sm mb-5" style={{ color: "#5e7d9f" }}>{height} cm</div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <div className="text-xs mb-1 font-medium" style={{ color: "#5e7d9f" }}>Pies (4 �� 7)</div>
+                <div className="text-xs mb-1 font-medium" style={{ color: "#5e7d9f" }}>Pies (4 – 7)</div>
                 <input
                   type="range" min={4} max={7} value={feetVal}
                   onChange={(e) => onFt(+e.target.value)}
@@ -594,20 +585,19 @@ function HeightStep({
             : { backgroundColor: "#e5e7eb", color: "#9ca3af", cursor: "not-allowed" }),
         }}
       >
-        Generar Mi Plan Personalizado →
+        Generar mi plan personalizado →
       </button>
     </div>
   )
 }
 
-// ─── Loading Screen ───────────────────────────────────────────────────────────
-
+// ─── Pantalla de Carga ───────────────────────────────────────────────────────
 const ANALYSIS = [
-  "Capacidad de Expansión Tisular",
-  "Potencial de Crecimiento Natural",
-  "Índice de Flujo Vascular",
-  "Línea Base de Fuerza Kegel",
-  "Puntuación de Coincidencia del Protocolo",
+  "Capacidad de expansión del tejido",
+  "Potencial de crecimiento natural",
+  "Índice de flujo vascular",
+  "Línea base de fuerza Kegel",
+  "Puntuación de compatibilidad del protocolo",
 ]
 
 function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => void }) {
@@ -645,17 +635,18 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
             className="text-xl font-extrabold text-center mb-1"
             style={{ color: "#003466", fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.5px" }}
           >
-            Analizando Tu Perfil
+            Analizando tu perfil
           </h2>
           <p className="text-center text-sm mb-5" style={{ color: "#5e7d9f" }}>
-            Creando tu protocolo personalizado…
+            Construyendo tu protocolo personalizado…
           </p>
 
+          {/* Slideshow — sin texto superpuesto */}
           <div
             className="relative h-64 overflow-hidden mb-6"
             style={{ borderRadius: "8px", backgroundColor: "#f3f4f6" }}
           >
-            {SLIDES.map((sl, i) => (
+            {SLIDES.map((s, i) => (
               <div
                 key={i}
                 className="absolute inset-0 transition-all duration-500"
@@ -665,8 +656,8 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
                 }}
               >
                 <img
-                  src={sl.src}
-                  alt={sl.label}
+                  src={s.src}
+                  alt=""
                   width={400}
                   height={256}
                   decoding="async"
@@ -674,15 +665,9 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
                   fetchPriority={i === 0 ? "high" : "auto"}
                   className="w-full h-full object-cover"
                 />
-                <div
-                  className="absolute inset-x-0 bottom-0 p-3"
-                  style={{ background: "linear-gradient(to top, rgba(0,0,0,0.85), transparent)" }}
-                >
-                  <p className="text-white text-sm font-bold text-center">{sl.label}</p>
-                </div>
               </div>
             ))}
-            <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex gap-2">
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
               {SLIDES.map((_, i) => (
                 <div
                   key={i}
@@ -711,7 +696,7 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
                       className="text-xs font-bold transition-all duration-300"
                       style={{ color: done ? "#36c57c" : active ? "#f59e0b" : "#d1d5db" }}
                     >
-                      {done ? "✓ Completado" : active ? "Procesando…" : "En espera"}
+                      {done ? "✓ Listo" : active ? "En curso…" : "Pendiente"}
                     </span>
                   </div>
                   <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: "#f3f4f6" }}>
@@ -737,15 +722,6 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
               {Math.round(progress)}%
             </div>
             <div className="text-sm mt-1" style={{ color: "#5e7d9f" }}>Análisis en curso</div>
-            <div className="mt-4 h-2.5 rounded-full overflow-hidden mx-8" style={{ backgroundColor: "#e5e7eb" }}>
-              <div
-                className="h-full rounded-full transition-all duration-500 relative"
-                style={{
-                  width: `${progress}%`,
-                  background: `linear-gradient(90deg, #003466 0%, #003466 ${Math.max(0, 100 - (15 / progress * 100))}%, #36c57c 100%)`,
-                }}
-              />
-            </div>
           </div>
         </div>
 
@@ -758,22 +734,21 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
   )
 }
 
-// ─── Results Screen ───────────────────────────────────────────────────────────
-
+// ─── Pantalla de Resultados ──────────────────────────────────────────────────
 const TESTIMONIALS = [
   {
-    name: "Carlos M.", location: "Madrid", age: 34, gain: "+3,7cm",
-    text: "Te felicito por lo que estás ofreciendo. Mi inseguridad me mantenía cerrado. Solo salía para ganar dinero, que después gastaba en cosas que no funcionaban — pastillas, bombas y pesas. Poner tu método en práctica fue como volver a la vida. Lo explicas todo de forma tan simple y clara...",
+    name: "Carlos M.", location: "Sevilla", age: 34, gain: "+3,7 cm",
+    text: "Os felicito por lo que estáis ofreciendo. Mi inseguridad me tenía encerrado. Solo salía para ganar dinero, que después gastaba en cosas que no funcionaban — pastillas, bombas y pesas. Poner tu método en práctica fue como volver a la vida. Lo explicas todo de forma tan sencilla y clara…",
     avatar: `${AVT_CDN}/t-carlos-MFpfh0uYLjKM4F1SPcbnuQKjCo44EA.png`,
   },
   {
-    name: "Roberto K.", location: "Barcelona", age: 38, gain: "+3,7cm",
-    text: "Te estoy muy agradecido. ¡Pero mi esposa lo está aún más! Salvaste mi matrimonio. El cambio fue increíble, muy notable y más rápido de lo que imaginaba. De 15 a 18,7 centímetros, y el grosor de 11 a 12,8 centímetros. Mi esposa está en la mejor etapa de su vida. ¡Y gracias a ti, es conmigo! Me liberaste de un problema enorme. ¡Mil gracias!",
+    name: "Diego R.", location: "Madrid", age: 38, gain: "+3,7 cm",
+    text: "Te estoy muy agradecido. ¡Pero mi mujer lo está aún más! Salvaste mi matrimonio. El cambio fue increíble, muy notable y más rápido de lo que pensaba. De 15 a 18,7 centímetros, y el grosor de 11 a 12,8 centímetros. Mi mujer se lo está pasando como nunca. ¡Y gracias a ti, es conmigo! De verdad me liberaste de un problema enorme. ¡Gracias, tío!",
     avatar: `${AVT_CDN}/t-roberto-2Rp5y8EWVWsiZMO2qU5P11CwfCjyiI.png`,
   },
   {
-    name: "Jorge F.", location: "Valencia", age: 42, gain: "+4,2cm",
-    text: "Fueron meses difíciles. Mi esposa Paula me dejó tras 7 años de matrimonio. No la culpo — estuvimos más de un año sin una relación íntima de verdad... Quedarme soltero de nuevo con cero confianza me estaba llevando a la depresión. Probé muchas cosas, pero solo tuve dolor y dinero perdido. Un amigo me recomendó tu sistema y yo dudé, pero sin nada que perder seguí tus instrucciones... Ahora no solo soy más grande, sino más firme y duro más. En 2 meses estuve con 5 mujeres nuevas, ¡y cada una tuvo experiencias increíbles! Aparentemente mi ex se enteró y ahora quiere volver...",
+    name: "Sergio F.", location: "Valencia", age: 42, gain: "+4,2 cm",
+    text: "Fueron unos meses duros. Mi mujer Paula me dejó después de 7 años de matrimonio. No la culpo — llevábamos más de un año sin una relación íntima de verdad… Volver a estar soltero con la confianza por los suelos me estaba metiendo en una depresión. Probé un montón de cosas, pero solo conseguí dolor y dinero tirado. Un amigo me recomendó tu sistema y tenía mis dudas, pero sin nada que perder seguí tus instrucciones… Ahora no solo soy más grande, sino más duro y aguanto más tiempo. En 2 meses he estado con 5 mujeres nuevas, ¡y cada una tuvo experiencias explosivas! Por lo visto mi ex se enteró y ahora quiere volver conmigo…",
     avatar: `${AVT_CDN}/t-jorge-378PxPddkBoypl3foZkPdOHRRwiEqb.png`,
   },
 ]
@@ -786,16 +761,16 @@ function ResultsScreen({
   const gain = calcGain(answers)
   const current = baseSize(answers)
   const target = +(current + gain).toFixed(1)
-  const [secs, setSecs] = useState(14 * 60 + 59)
+  const [secs, setSecs] = useState(7 * 60 + 59)
   const [spots, setSpots] = useState(3)
 
   const protocolName =
-    answers[0]?.includes("51") ? "Protocolo Revitalización" :
-    answers[0]?.includes("36") ? "Protocolo Alto Rendimiento" :
-    answers[0]?.includes("26") ? "Protocolo Crecimiento Prime" :
-    "Protocolo Crecimiento Rápido"
+    answers[0]?.includes("51") ? "Protocolo Revitalizador" :
+    answers[0]?.includes("36") ? "Protocolo de Máximo Rendimiento" :
+    answers[0]?.includes("26") ? "Protocolo de Crecimiento Óptimo" :
+    "Protocolo de Crecimiento Rápido"
 
-  const ageLabel = answers[0]?.match(/\d+\s*[–-]\s*\d+/)?.[0] ?? "tu rango de edad"
+  const ageLabel = answers[0]?.match(/\d+\s*[–-]\s*\d+/)?.[0] ?? "tu grupo de edad"
 
   useEffect(() => {
     setSpots(Math.floor(Math.random() * 2) + 2)
@@ -817,14 +792,14 @@ function ResultsScreen({
     <div className="min-h-screen pb-16" style={{ backgroundColor: "#f0f4ff", fontFamily: "'Roboto', sans-serif" }}>
       <div className="text-white text-center py-2.5 px-4" style={{ backgroundColor: "#36c57c" }}>
         <p className="text-sm font-bold" style={{ fontFamily: "'Montserrat', sans-serif" }}>
-          Tu plan personalizado está listo — {spots} plaza{spots !== 1 ? "s" : ""} restante{spots !== 1 ? "s" : ""} hoy
+          Tu plan personalizado está listo — {spots === 1 ? "queda 1 plaza" : `quedan ${spots} plazas`} hoy
         </p>
       </div>
 
       <Header />
 
       <main className="max-w-md mx-auto px-4 pt-5 space-y-4">
-        {/* Countdown */}
+        {/* Cuenta atrás */}
         <div
           className="p-4 flex items-center justify-between"
           style={{ backgroundColor: "#fffbeb", border: "1px solid #fcd34d", borderRadius: "8px" }}
@@ -833,7 +808,7 @@ function ResultsScreen({
             <div className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "#d97706" }}>
               Reservado para ti
             </div>
-            <div className="text-sm font-medium" style={{ color: "#92400e" }}>Tu plan caduca en</div>
+            <div className="text-sm font-medium" style={{ color: "#92400e" }}>Tu plan expira en</div>
           </div>
           <div
             className="text-3xl font-extrabold tabular-nums"
@@ -843,7 +818,7 @@ function ResultsScreen({
           </div>
         </div>
 
-        {/* Main card */}
+        {/* Tarjeta principal */}
         <div className="bg-white overflow-hidden" style={{ borderRadius: "10px", boxShadow: "0 4px 20px rgba(0,0,0,0.10)" }}>
           <div
             className="px-6 py-6 text-white text-center"
@@ -853,7 +828,7 @@ function ResultsScreen({
               className="text-[10px] font-semibold tracking-[0.2em] uppercase mb-1"
               style={{ color: "#669ef3" }}
             >
-              Tu Plan Personalizado
+              Tu plan personalizado
             </div>
             <div
               className="text-[26px] font-extrabold"
@@ -862,12 +837,12 @@ function ResultsScreen({
               {protocolName}
             </div>
             <div className="text-sm mt-0.5" style={{ color: "#669ef3" }}>
-              Protocolo Congoleño + Entrenamiento Kegel · Calibrado para {ageLabel}
+              Protocolo Congolés + Entrenamiento Kegel · Calibrado para {ageLabel}
             </div>
           </div>
 
           <div className="p-6 space-y-5">
-            {/* Big number */}
+            {/* Número grande */}
             <div
               className="p-5 text-center"
               style={{
@@ -876,22 +851,22 @@ function ResultsScreen({
                 borderRadius: "8px",
               }}
             >
-              <div className="text-sm mb-1" style={{ color: "#5e7d9f" }}>Tu ganancia proyectada en 45 días</div>
+              <div className="text-sm mb-1" style={{ color: "#5e7d9f" }}>Tu ganancia proyectada en 60 días</div>
               <div
                 className="text-7xl font-extrabold leading-none"
                 style={{ color: "#003466", fontFamily: "'Montserrat', sans-serif" }}
               >
-                +{gain}<span className="text-4xl">cm</span>
+                +{formatDec(gain)}<span className="text-4xl">cm</span>
               </div>
               <div className="text-sm mt-1.5" style={{ color: "#5e7d9f" }}>
                 Basado en tu edad, perfil de salud y línea base hormonal
               </div>
             </div>
 
-            {/* Size visualiser */}
+            {/* Visualizador de tamaño */}
             <div>
               <div className="flex justify-between text-xs font-bold uppercase tracking-wide mb-2" style={{ color: "#5e7d9f" }}>
-                <span>Ahora</span><span>Día 45</span>
+                <span>Ahora</span><span>Día 60</span>
               </div>
               <div className="relative h-6 rounded-full overflow-hidden" style={{ backgroundColor: "#f3f4f6" }}>
                 <div
@@ -903,17 +878,17 @@ function ResultsScreen({
                   style={{ width: `${(target / 22) * 100}%`, background: "linear-gradient(to right, #003466, #025fde)" }}
                 />
                 <div className="absolute inset-0 flex items-center justify-center text-white text-xs font-extrabold">
-                  {current}cm → {target}cm
+                  {current} cm → {formatDec(target)} cm
                 </div>
               </div>
             </div>
 
-            {/* Timeline milestones */}
+            {/* Hitos de la línea temporal */}
             <div className="grid grid-cols-3 gap-2.5">
               {[
-                { t: "Semana 2", v: `+${+(gain * 0.28).toFixed(1)}cm`, n: "Primeros cambios" },
-                { t: "Día 21", v: `+${+(gain * 0.58).toFixed(1)}cm`, n: "Crecimiento visible" },
-                { t: "Día 45", v: `+${gain}cm`, n: "Resultado completo" },
+                { t: "Semana 2", v: `+${formatDec(+(gain * 0.28).toFixed(1))} cm`, n: "Primeros cambios" },
+                { t: "Día 30", v: `+${formatDec(+(gain * 0.58).toFixed(1))} cm`, n: "Crecimiento visible" },
+                { t: "Día 60", v: `+${formatDec(gain)} cm`, n: "Resultado final" },
               ].map((m) => (
                 <div
                   key={m.t}
@@ -932,16 +907,15 @@ function ResultsScreen({
               ))}
             </div>
 
-            {/* Benefits */}
+            {/* Beneficios */}
             <div className="space-y-2.5 pt-1">
               {[
-                "Aumenta longitud y grosor de forma natural — sin aparatos",
                 "Erecciones más fuertes y duraderas",
-                "Técnicas avanzadas de Kegel para resistencia y control",
+                "Técnicas Kegel avanzadas para resistencia y control",
                 "Primeros resultados visibles en 14 días",
-                "Más confianza y rendimiento en la cama",
+                "Mayor confianza y rendimiento en la cama",
                 "Sin pastillas, sin bombas, sin efectos secundarios",
-                "Discreto — todo se hace en casa",
+                "Discreto — todo se hace desde casa",
               ].map((b) => (
                 <div key={b} className="flex items-start gap-3">
                   <div
@@ -957,13 +931,13 @@ function ResultsScreen({
           </div>
         </div>
 
-        {/* Testimonials */}
+        {/* Testimonios */}
         <div>
           <div
             className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-center mb-3"
             style={{ color: "#5e7d9f", fontFamily: "'Montserrat', sans-serif" }}
           >
-            Resultados reales de hombres en España
+            Resultados reales de hombres como tú
           </div>
           <div className="space-y-3">
             {TESTIMONIALS.map((t, idx) => (
@@ -980,7 +954,7 @@ function ResultsScreen({
                 <div className="flex items-start gap-3">
                   <img
                     src={t.avatar}
-                    alt={`Avatar de ${t.name}`}
+                    alt={`Foto de ${t.name}`}
                     width={56}
                     height={56}
                     loading="lazy"
@@ -1020,7 +994,7 @@ function ResultsScreen({
           </div>
         </div>
 
-        {/* Guarantee */}
+        {/* Garantía */}
         <div
           className="p-5 flex items-center gap-4"
           style={{ backgroundColor: "#003466", borderRadius: "8px" }}
@@ -1031,15 +1005,15 @@ function ResultsScreen({
               className="text-white font-extrabold text-base"
               style={{ fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.5px" }}
             >
-              Garantía de 30 Días con Devolución de Dinero
+              Garantía de devolución de 30 días
             </div>
             <div className="text-sm mt-0.5" style={{ color: "#669ef3" }}>
-              ¿Sin resultados en 30 días? Reembolso total. Sin preguntas.
+              ¿Ningún resultado en 30 días? Reembolso completo. Sin preguntas.
             </div>
           </div>
         </div>
 
-        {/* CTA block */}
+        {/* Bloque CTA */}
         <div className="space-y-3 pt-1">
           <button
             type="button"
@@ -1052,14 +1026,14 @@ function ResultsScreen({
               letterSpacing: "0.5px",
             }}
           >
-            Quiero Mi Plan Ahora →
+            Reclamar mi plan ahora →
           </button>
 
           <div className="flex items-center justify-center gap-3 text-xs flex-wrap" style={{ color: "#5e7d9f" }}>
             <span className="flex items-center gap-1"><LockIcon className="w-3 h-3" /> Pago seguro</span>
-            <span>·</span><span>Cobro discreto</span>
-            <span>·</span><span>Envío a toda España</span>
-            <span>·</span><span>Precios en EUR</span>
+            <span>·</span><span>Facturación discreta</span>
+            <span>·</span><span>Envío a todo el mundo</span>
+            <span>·</span><span>Precio según tu país</span>
           </div>
 
           <div
@@ -1067,7 +1041,7 @@ function ResultsScreen({
             style={{ backgroundColor: "#fffbeb", border: "1px solid #fcd34d", borderRadius: "8px" }}
           >
             <p className="text-sm font-bold" style={{ color: "#b45309" }}>
-              ⚡ {spots} plaza{spots !== 1 ? "s" : ""} restante{spots !== 1 ? "s" : ""} a este precio — caduca en {fmt(secs)}
+              ⚡ {spots === 1 ? "Queda 1 plaza" : `Quedan ${spots} plazas`} a este precio — expira en {fmt(secs)}
             </p>
           </div>
         </div>
@@ -1076,8 +1050,7 @@ function ResultsScreen({
   )
 }
 
-// ─── Main ─────────────────────────────────────────────────────────────────────
-
+// ─── Principal ───────────────────────────────────────────────────────────────
 export default function SpainQuiz() {
   useFbPixel()
   usePrefetchSlides()
@@ -1130,7 +1103,6 @@ export default function SpainQuiz() {
       }
       return { ...prev, answers, stepIndex: next }
     })
-    // iOS Safari: smooth scroll can briefly freeze the next paint.
     if (typeof window !== "undefined") {
       requestAnimationFrame(() => {
         try { window.scrollTo({ top: 0, behavior: "auto" }) } catch { window.scrollTo(0, 0) }
@@ -1171,7 +1143,6 @@ export default function SpainQuiz() {
   }, [merge])
 
   // ─── Render ───────────────────────────────────────────────────────────────
-
   if (s.screen === "loading") {
     return (
       <>
@@ -1201,7 +1172,6 @@ export default function SpainQuiz() {
   const isInfo = step.kind === "info"
   const qNum = STEPS.slice(0, s.stepIndex + 1).filter((x) => x.kind === "q").length
 
-  // Info screen with video
   if (isInfo) {
     return (
       <>
@@ -1221,7 +1191,7 @@ export default function SpainQuiz() {
                   className="text-[10px] font-extrabold uppercase tracking-[0.22em] mb-1"
                   style={{ color: "#d1d5db", fontFamily: "'Montserrat', sans-serif" }}
                 >
-                  ¿Sabías que…?
+                  ¿Sabías que?
                 </div>
                 <h2
                   className="text-xl sm:text-[22px] font-extrabold leading-tight"
@@ -1303,7 +1273,7 @@ export default function SpainQuiz() {
                 className="text-[10px] font-extrabold uppercase tracking-[0.22em] mb-3"
                 style={{ color: "#d1d5db", fontFamily: "'Montserrat', sans-serif" }}
               >
-                {isHeight ? "Tus Datos" : `Pregunta ${qNum} de ${TOTAL_Q}`}
+                {isHeight ? "Tus datos" : `Pregunta ${qNum} de ${TOTAL_Q}`}
               </div>
 
               <h2
@@ -1373,7 +1343,7 @@ export default function SpainQuiz() {
             >
               <span style={{ color: "#669ef3" }}><LockIcon className="w-4 h-4" /></span>
               <p className="text-xs font-semibold" style={{ color: "#669ef3" }}>
-                Tus respuestas son 100% privadas — nunca se comparten ni se venden
+                Tus respuestas son 100% privadas — nunca se comparten ni venden
               </p>
             </div>
           </div>
