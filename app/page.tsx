@@ -62,8 +62,11 @@ function GlobalStyles() {
         }
         .animate-pulse-border { animation: pulse-border 0.6s ease-out; }
         .animate-check-in { animation: check-in 0.2s ease-out forwards; }
-        .animate-slide-up { animation: slide-up 0.25s ease-out forwards; will-change: transform, opacity; }
+        .animate-slide-up { animation: slide-up 0.25s ease-out forwards; }
         .animate-progress-glow { animation: progress-glow 2s ease-in-out infinite; }
+
+        /* iOS / iPhone XR fixes: ensure taps register reliably */
+        html, body { -webkit-text-size-adjust: 100%; }
 
         .opt-btn {
           width: 100%;
@@ -120,6 +123,9 @@ function GlobalStyles() {
         }
 
         .cta-btn { transition: transform .18s, box-shadow .18s; }
+        @media (hover: hover) {
+          .cta-btn:hover:not(:disabled) { transform: translateY(-2px); }
+        }
         @media (hover: hover) {
           .cta-btn:hover:not(:disabled) { transform: translateY(-2px); }
         }
@@ -205,101 +211,101 @@ const STEPS: Step[] = [
   {
     kind: "q",
     id: "age",
-    q: "Quantos anos você tem?",
-    hint: "Isso determina sua janela de crescimento e a intensidade do protocolo",
+    q: "¿Cuántos años tienes?",
+    hint: "Esto determina tu ventana de crecimiento y la intensidad del protocolo",
     opts: ["18 – 25", "26 – 35", "36 – 50", "51 – 65"],
   },
   {
     kind: "q",
     id: "goal",
-    q: "Qual é o seu principal objetivo agora?",
-    hint: "Vamos montar seu plano em torno disso",
+    q: "¿Cuál es tu principal objetivo ahora?",
+    hint: "Vamos a diseñar tu plan en torno a esto",
     opts: [
-      "Aumentar o tamanho — comprimento e espessura",
-      "Durar mais e melhorar a resistência",
-      "Ereções mais fortes e firmes",
-      "Todos os itens acima",
+      "Aumentar el tamaño — longitud y grosor",
+      "Durar más y mejorar la resistencia",
+      "Erecciones más fuertes y firmes",
+      "Todas las opciones anteriores",
     ],
   },
   {
     kind: "q",
     id: "erections",
-    q: "Com que frequência você acorda com ereção matinal?",
-    hint: "Um indicador-chave da saúde da testosterona e do fluxo sanguíneo",
-    note: "As ereções matinais são o indicador mais claro da produção de testosterona e da saúde arterial.",
-    opts: ["Quase nunca", "Raramente — uma ou duas vezes por semana", "Na maioria das manhãs", "Toda manhã sem exceção"],
+    q: "¿Con qué frecuencia te despiertas con erección matutina?",
+    hint: "Un indicador clave de la salud de la testosterona y del flujo sanguíneo",
+    note: "Las erecciones matutinas son el indicador más claro de la producción de testosterona y de la salud arterial.",
+    opts: ["Casi nunca", "Rara vez — una o dos veces por semana", "La mayoría de las mañanas", "Todas las mañanas sin excepción"],
   },
   {
     kind: "info",
     id: "info1",
-    title: "A fraqueza do assoalho pélvico pode ser a causa invisível por trás da ejaculação precoce",
+    title: "La debilidad del suelo pélvico puede ser la causa invisible detrás de la eyaculación precoz",
     video: `${VID_CDN}/wp-content/uploads/2025/05/Assoalho-Pelvico-2.mp4`,
-    quote: "A tensão crônica ou fraqueza dos músculos pélvicos pode tornar a ejaculação automática e incontrolável.",
+    quote: "La tensión crónica o la debilidad de los músculos pélvicos puede hacer que la eyaculación sea automática e incontrolable.",
   },
   {
     kind: "q",
     id: "size",
-    q: "Qual é o seu comprimento ereto atual?",
-    hint: "Seja honesto — seus resultados são completamente privados",
+    q: "¿Cuál es tu longitud erecta actual?",
+    hint: "Sé honesto — tus resultados son completamente privados",
     opts: [
       "Menos de 12 cm",
       "12 – 14 cm",
       "14 – 16 cm",
-      "Mais de 16 cm",
+      "Más de 16 cm",
     ],
   },
   {
     kind: "q",
     id: "sleep",
-    q: "Quantas horas de sono você costuma ter por noite?",
-    hint: "O sono é quando a testosterona é produzida — isso importa mais do que você imagina",
-    note: "Até 70% da testosterona diária é produzida durante o sono profundo. Menos de 6 horas pode reduzir seu potencial de crescimento pela metade.",
-    opts: ["Menos de 5 horas", "5 – 6 horas", "6 – 7 horas", "8 horas ou mais"],
+    q: "¿Cuántas horas de sueño sueles tener por noche?",
+    hint: "El sueño es cuando se produce la testosterona — importa más de lo que imaginas",
+    note: "Hasta el 70% de la testosterona diaria se produce durante el sueño profundo. Menos de 6 horas puede reducir tu potencial de crecimiento a la mitad.",
+    opts: ["Menos de 5 horas", "5 – 6 horas", "6 – 7 horas", "8 horas o más"],
   },
   {
     kind: "q",
     id: "exercise",
-    q: "Com que frequência você se exercita por semana?",
-    hint: "A atividade física estimula diretamente a produção de hormônio do crescimento",
-    opts: ["Raramente ou nunca", "Uma vez por semana", "2 – 3 vezes por semana", "4 ou mais vezes por semana"],
+    q: "¿Con qué frecuencia haces ejercicio por semana?",
+    hint: "La actividad física estimula directamente la producción de hormona del crecimiento",
+    opts: ["Rara vez o nunca", "Una vez por semana", "2 – 3 veces por semana", "4 o más veces por semana"],
   },
   {
     kind: "info",
     id: "info2",
-    title: "O controle ejaculatório está diretamente ligado à força dos músculos do assoalho pélvico",
+    title: "El control eyaculatorio está directamente ligado a la fuerza de los músculos del suelo pélvico",
     video: `${VID_CDN}/wp-content/uploads/2025/05/Assoalho-Pelvico-1.mp4`,
-    quote: "Fortalecer esses músculos permite melhor controle do reflexo ejaculatório e maior retenção de sangue.",
+    quote: "Fortalecer estos músculos permite mejor control del reflejo eyaculatorio y mayor retención de sangre.",
   },
   {
     kind: "q",
     id: "diet",
-    q: "Como você descreveria honestamente sua alimentação?",
-    hint: "A nutrição alimenta a expansão tecidual em nível celular",
+    q: "¿Cómo describirías honestamente tu alimentación?",
+    hint: "La nutrición alimenta la expansión tisular a nivel celular",
     opts: [
-      "Principalmente fast food e salgadinhos",
-      "Metade e metade — depende do dia",
-      "Refeições geralmente equilibradas",
-      "Alimentação limpa e natural na maior parte do tempo",
+      "Principalmente comida rápida y snacks",
+      "Mitad y mitad — depende del día",
+      "Comidas generalmente equilibradas",
+      "Alimentación limpia y natural la mayor parte del tiempo",
     ],
   },
   {
     kind: "q",
     id: "tried",
-    q: "Você já tentou algum método natural de aumento antes?",
-    hint: "Isso determina por onde começamos o seu protocolo",
-    note: "Bombas e pesos causam microlesões que bloqueiam o crescimento. Seu protocolo começa com uma fase de recuperação, se necessário.",
+    q: "¿Has probado algún método natural de aumento antes?",
+    hint: "Esto determina por dónde empezamos tu protocolo",
+    note: "Las bombas y pesas causan microlesiones que bloquean el crecimiento. Tu protocolo comienza con una fase de recuperación, si es necesario.",
     opts: [
-      "Não — nunca ouvi falar",
-      "Já ouvi falar mas nunca tentei",
-      "Tentei, mas não fui consistente",
-      "Sim — mas vi poucos ou nenhum resultado",
+      "No — nunca había oído hablar",
+      "He oído hablar pero nunca lo he intentado",
+      "Lo intenté, pero no fui constante",
+      "Sí — pero vi pocos o ningún resultado",
     ],
   },
   {
     kind: "h",
     id: "height",
-    q: "Qual é a sua altura?",
-    hint: "Usada para ajustar sua linha de base hormonal",
+    q: "¿Cuál es tu altura?",
+    hint: "Se utiliza para ajustar tu línea base hormonal",
   },
 ]
 
@@ -312,11 +318,11 @@ const calcGain = (a: Record<number, string>): number => {
   if (a[0]?.includes("18")) g += 1.1
   else if (a[0]?.includes("26")) g += 0.7
   else if (a[0]?.includes("36")) g += 0.4
-  if (a[2] === "Toda manhã sem exceção") g += 0.7
-  else if (a[2] === "Na maioria das manhãs") g += 0.4
-  if (a[5]?.includes("4 ou mais")) g += 0.5
+  if (a[2] === "Todas las mañanas sin excepción") g += 0.7
+  else if (a[2] === "La mayoría de las mañanas") g += 0.4
+  if (a[5]?.includes("4 o más")) g += 0.5
   else if (a[5]?.includes("2 – 3")) g += 0.3
-  if (a[6]?.includes("limpa") || a[6]?.includes("equilibradas")) g += 0.4
+  if (a[6]?.includes("limpia") || a[6]?.includes("equilibradas")) g += 0.4
   if (a[4]?.includes("8 horas") || a[4]?.includes("6 – 7")) g += 0.3
   return Math.min(7.5, Math.round(g * 10) / 10)
 }
@@ -343,19 +349,19 @@ const Header = memo(function Header() {
         className="text-[10px] font-semibold tracking-[0.22em] uppercase mb-1"
         style={{ color: "#669ef3" }}
       >
-        Consulta Profissional Gratuita
+        Consulta Profesional Gratuita
       </p>
       <h1
         className="text-[26px] sm:text-[32px] font-extrabold text-white uppercase leading-tight"
         style={{ fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.5px" }}
       >
-        Protocolo Congolês
+        Protocolo Congoleño
       </h1>
       <p
         className="text-[10px] tracking-widest uppercase mt-1"
         style={{ color: "#669ef3" }}
       >
-        Sistema Natural de Crescimento
+        Sistema Natural de Crecimiento
       </p>
     </header>
   )
@@ -412,7 +418,7 @@ const ProgressBar = memo(function ProgressBar({ step }: { step: number }) {
     <div className="px-4 pt-4 pb-3">
       <div className="p-3 rounded-lg" style={{ backgroundColor: "#002855" }}>
         <div className="flex justify-between text-[11px] mb-2 font-semibold" style={{ color: "#94a3b8" }}>
-          <span>Pergunta {step} de {TOTAL_Q}</span>
+          <span>Pregunta {step} de {TOTAL_Q}</span>
           <span>{pct}%</span>
         </div>
         <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: "#1e3a5f" }}>
@@ -434,24 +440,36 @@ const OptionBtn = memo(function OptionBtn({
   index: number
 }) {
   const [selected, setSelected] = useState(false)
+  const firedRef = useRef(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => () => {
     if (timerRef.current) clearTimeout(timerRef.current)
   }, [])
 
-  const handleClick = () => {
+  // Universal handler for all devices including iPhone XR
+  const handleInteraction = useCallback(() => {
+    if (firedRef.current || selected) return
+    firedRef.current = true
     setSelected(true)
     timerRef.current = setTimeout(() => onSelect(value), 350)
-  }
+  }, [onSelect, value, selected])
 
   return (
     <button
-      onClick={handleClick}
-      disabled={selected}
+      type="button"
+      onClick={handleInteraction}
+      onPointerDown={handleInteraction}
       data-selected={selected ? "true" : "false"}
       className={`opt-btn animate-slide-up ${selected ? "animate-pulse-border" : ""}`}
-      style={{ animationDelay: `${index * 50}ms`, animationFillMode: "both" }}
+      style={{ 
+        animationDelay: `${index * 50}ms`, 
+        animationFillMode: "both",
+        touchAction: "manipulation",
+        WebkitTapHighlightColor: "transparent",
+        WebkitUserSelect: "none",
+        userSelect: "none",
+      }}
     >
       <span className="leading-snug">{value}</span>
       <span className="opt-radio">
@@ -488,6 +506,7 @@ function HeightStep({
           {(["cm", "ft"] as const).map((u) => (
             <button
               key={u}
+              type="button"
               onClick={() => onUnit(u)}
               className="px-5 py-1.5 text-sm font-bold transition-all"
               style={{
@@ -496,7 +515,7 @@ function HeightStep({
                 color: u === unit ? "#fff" : "#5e7d9f",
               }}
             >
-              {u === "cm" ? "cm" : "pés / pol"}
+              {u === "cm" ? "cm" : "pies / pulg"}
             </button>
           ))}
         </div>
@@ -520,7 +539,7 @@ function HeightStep({
               onChange={(e) => onHeight(+e.target.value)}
               className="w-full cursor-pointer"
               style={{ accentColor: "#003466" }}
-              aria-label="Altura em centímetros"
+              aria-label="Altura en centímetros"
             />
             <div className="flex justify-between text-xs mt-1.5" style={{ color: "#9ca3af" }}>
               <span>140 cm</span><span>225 cm</span>
@@ -537,23 +556,23 @@ function HeightStep({
             <div className="text-sm mb-5" style={{ color: "#5e7d9f" }}>{height} cm</div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <div className="text-xs mb-1 font-medium" style={{ color: "#5e7d9f" }}>Pés (4 – 7)</div>
+                <div className="text-xs mb-1 font-medium" style={{ color: "#5e7d9f" }}>Pies (4 �� 7)</div>
                 <input
                   type="range" min={4} max={7} value={feetVal}
                   onChange={(e) => onFt(+e.target.value)}
                   className="w-full cursor-pointer"
                   style={{ accentColor: "#003466" }}
-                  aria-label="Altura em pés"
+                  aria-label="Altura en pies"
                 />
               </div>
               <div>
-                <div className="text-xs mb-1 font-medium" style={{ color: "#5e7d9f" }}>Polegadas (0 – 11)</div>
+                <div className="text-xs mb-1 font-medium" style={{ color: "#5e7d9f" }}>Pulgadas (0 – 11)</div>
                 <input
                   type="range" min={0} max={11} value={inchVal}
                   onChange={(e) => onIn(+e.target.value)}
                   className="w-full cursor-pointer"
                   style={{ accentColor: "#003466" }}
-                  aria-label="Altura em polegadas"
+                  aria-label="Altura en pulgadas"
                 />
               </div>
             </div>
@@ -562,6 +581,7 @@ function HeightStep({
       </div>
 
       <button
+        type="button"
         onClick={onContinue}
         disabled={!valid}
         className="cta-btn w-full py-4 font-extrabold text-[15px] uppercase tracking-wide"
@@ -574,7 +594,7 @@ function HeightStep({
             : { backgroundColor: "#e5e7eb", color: "#9ca3af", cursor: "not-allowed" }),
         }}
       >
-        Gerar Meu Plano Personalizado →
+        Generar Mi Plan Personalizado →
       </button>
     </div>
   )
@@ -583,11 +603,11 @@ function HeightStep({
 // ─── Loading Screen ───────────────────────────────────────────────────────────
 
 const ANALYSIS = [
-  "Capacidade de Expansão Tecidual",
-  "Potencial de Crescimento Natural",
-  "Índice de Fluxo Vascular",
-  "Linha de Base de Força Kegel",
-  "Pontuação de Correspondência do Protocolo",
+  "Capacidad de Expansión Tisular",
+  "Potencial de Crecimiento Natural",
+  "Índice de Flujo Vascular",
+  "Línea Base de Fuerza Kegel",
+  "Puntuación de Coincidencia del Protocolo",
 ]
 
 function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => void }) {
@@ -625,17 +645,17 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
             className="text-xl font-extrabold text-center mb-1"
             style={{ color: "#003466", fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.5px" }}
           >
-            Analisando Seu Perfil
+            Analizando Tu Perfil
           </h2>
           <p className="text-center text-sm mb-5" style={{ color: "#5e7d9f" }}>
-            Criando seu protocolo personalizado…
+            Creando tu protocolo personalizado…
           </p>
 
           <div
             className="relative h-64 overflow-hidden mb-6"
             style={{ borderRadius: "8px", backgroundColor: "#f3f4f6" }}
           >
-            {SLIDES.map((s, i) => (
+            {SLIDES.map((sl, i) => (
               <div
                 key={i}
                 className="absolute inset-0 transition-all duration-500"
@@ -645,8 +665,8 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
                 }}
               >
                 <img
-                  src={s.src}
-                  alt={s.label}
+                  src={sl.src}
+                  alt={sl.label}
                   width={400}
                   height={256}
                   decoding="async"
@@ -658,7 +678,7 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
                   className="absolute inset-x-0 bottom-0 p-3"
                   style={{ background: "linear-gradient(to top, rgba(0,0,0,0.85), transparent)" }}
                 >
-                  <p className="text-white text-sm font-bold text-center">{s.label}</p>
+                  <p className="text-white text-sm font-bold text-center">{sl.label}</p>
                 </div>
               </div>
             ))}
@@ -691,7 +711,7 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
                       className="text-xs font-bold transition-all duration-300"
                       style={{ color: done ? "#36c57c" : active ? "#f59e0b" : "#d1d5db" }}
                     >
-                      {done ? "✓ Concluído" : active ? "Processando…" : "Aguardando"}
+                      {done ? "✓ Completado" : active ? "Procesando…" : "En espera"}
                     </span>
                   </div>
                   <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: "#f3f4f6" }}>
@@ -716,7 +736,7 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
             >
               {Math.round(progress)}%
             </div>
-            <div className="text-sm mt-1" style={{ color: "#5e7d9f" }}>Análise em andamento</div>
+            <div className="text-sm mt-1" style={{ color: "#5e7d9f" }}>Análisis en curso</div>
             <div className="mt-4 h-2.5 rounded-full overflow-hidden mx-8" style={{ backgroundColor: "#e5e7eb" }}>
               <div
                 className="h-full rounded-full transition-all duration-500 relative"
@@ -731,7 +751,7 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
 
         <div className="flex items-center justify-center gap-2 text-xs animate-slide-up" style={{ color: "#669ef3", animationDelay: "200ms" }}>
           <LockIcon className="w-3 h-3" />
-          Seus dados são 100% privados e nunca compartilhados
+          Tus datos son 100% privados y nunca se comparten
         </div>
       </div>
     </div>
@@ -742,18 +762,18 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
 
 const TESTIMONIALS = [
   {
-    name: "Carlos M.", location: "São Paulo", age: 34, gain: "+3,7cm",
-    text: "Te parabenizo pelo que você está oferecendo. Minha insegurança me mantinha fechado. Só saía para ganhar dinheiro, que depois gastava com coisas que não funcionavam — pílulas, bombas e pesos. Colocar seu método em prática foi como voltar à vida. Você explica tudo de forma tão simples e clara...",
+    name: "Carlos M.", location: "Madrid", age: 34, gain: "+3,7cm",
+    text: "Te felicito por lo que estás ofreciendo. Mi inseguridad me mantenía cerrado. Solo salía para ganar dinero, que después gastaba en cosas que no funcionaban — pastillas, bombas y pesas. Poner tu método en práctica fue como volver a la vida. Lo explicas todo de forma tan simple y clara...",
     avatar: `${AVT_CDN}/t-carlos-MFpfh0uYLjKM4F1SPcbnuQKjCo44EA.png`,
   },
   {
-    name: "Roberto K.", location: "Rio de Janeiro", age: 38, gain: "+3,7cm",
-    text: "Sou muito grato a você. Mas minha esposa é ainda mais grata! Você salvou meu casamento. A mudança foi incrível, muito perceptível e mais rápida do que eu imaginava. De 15 para 18,7 centímetros, e a espessura de 11 para 12,8 centímetros. Minha esposa está na melhor fase da vida dela. E graças a você, é comigo! Você me libertou de um problema enorme. Valeu demais!",
+    name: "Roberto K.", location: "Barcelona", age: 38, gain: "+3,7cm",
+    text: "Te estoy muy agradecido. ¡Pero mi esposa lo está aún más! Salvaste mi matrimonio. El cambio fue increíble, muy notable y más rápido de lo que imaginaba. De 15 a 18,7 centímetros, y el grosor de 11 a 12,8 centímetros. Mi esposa está en la mejor etapa de su vida. ¡Y gracias a ti, es conmigo! Me liberaste de un problema enorme. ¡Mil gracias!",
     avatar: `${AVT_CDN}/t-roberto-2Rp5y8EWVWsiZMO2qU5P11CwfCjyiI.png`,
   },
   {
-    name: "Jorge F.", location: "Belo Horizonte", age: 42, gain: "+4,2cm",
-    text: "Foram meses difíceis. Minha esposa Paula me deixou após 7 anos de casamento. Não a culpo — ficamos mais de um ano sem uma relação íntima de verdade... Ficar solteiro de novo com zero confiança estava me levando à depressão. Tentei muita coisa, mas só tive dor e dinheiro perdido. Um amigo me indicou seu sistema e eu duvidei, mas sem nada a perder segui suas instruções... Agora não só sou maior, mas mais firme e durando mais. Em 2 meses fui com 5 mulheres novas, e cada uma teve experiências incríveis! Aparentemente minha ex ficou sabendo e agora quer voltar...",
+    name: "Jorge F.", location: "Valencia", age: 42, gain: "+4,2cm",
+    text: "Fueron meses difíciles. Mi esposa Paula me dejó tras 7 años de matrimonio. No la culpo — estuvimos más de un año sin una relación íntima de verdad... Quedarme soltero de nuevo con cero confianza me estaba llevando a la depresión. Probé muchas cosas, pero solo tuve dolor y dinero perdido. Un amigo me recomendó tu sistema y yo dudé, pero sin nada que perder seguí tus instrucciones... Ahora no solo soy más grande, sino más firme y duro más. En 2 meses estuve con 5 mujeres nuevas, ¡y cada una tuvo experiencias increíbles! Aparentemente mi ex se enteró y ahora quiere volver...",
     avatar: `${AVT_CDN}/t-jorge-378PxPddkBoypl3foZkPdOHRRwiEqb.png`,
   },
 ]
@@ -770,12 +790,12 @@ function ResultsScreen({
   const [spots, setSpots] = useState(3)
 
   const protocolName =
-    answers[0]?.includes("51") ? "Protocolo Revitalização" :
-    answers[0]?.includes("36") ? "Protocolo Alta Performance" :
-    answers[0]?.includes("26") ? "Protocolo Crescimento Prime" :
-    "Protocolo Crescimento Rápido"
+    answers[0]?.includes("51") ? "Protocolo Revitalización" :
+    answers[0]?.includes("36") ? "Protocolo Alto Rendimiento" :
+    answers[0]?.includes("26") ? "Protocolo Crecimiento Prime" :
+    "Protocolo Crecimiento Rápido"
 
-  const ageLabel = answers[0]?.match(/\d+\s*[–-]\s*\d+/)?.[0] ?? "sua faixa etária"
+  const ageLabel = answers[0]?.match(/\d+\s*[–-]\s*\d+/)?.[0] ?? "tu rango de edad"
 
   useEffect(() => {
     setSpots(Math.floor(Math.random() * 2) + 2)
@@ -797,7 +817,7 @@ function ResultsScreen({
     <div className="min-h-screen pb-16" style={{ backgroundColor: "#f0f4ff", fontFamily: "'Roboto', sans-serif" }}>
       <div className="text-white text-center py-2.5 px-4" style={{ backgroundColor: "#36c57c" }}>
         <p className="text-sm font-bold" style={{ fontFamily: "'Montserrat', sans-serif" }}>
-          Seu plano personalizado está pronto — {spots} vaga{spots !== 1 ? "s" : ""} restante{spots !== 1 ? "s" : ""} hoje
+          Tu plan personalizado está listo — {spots} plaza{spots !== 1 ? "s" : ""} restante{spots !== 1 ? "s" : ""} hoy
         </p>
       </div>
 
@@ -811,9 +831,9 @@ function ResultsScreen({
         >
           <div>
             <div className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "#d97706" }}>
-              Reservado para você
+              Reservado para ti
             </div>
-            <div className="text-sm font-medium" style={{ color: "#92400e" }}>Seu plano expira em</div>
+            <div className="text-sm font-medium" style={{ color: "#92400e" }}>Tu plan caduca en</div>
           </div>
           <div
             className="text-3xl font-extrabold tabular-nums"
@@ -833,7 +853,7 @@ function ResultsScreen({
               className="text-[10px] font-semibold tracking-[0.2em] uppercase mb-1"
               style={{ color: "#669ef3" }}
             >
-              Seu Plano Personalizado
+              Tu Plan Personalizado
             </div>
             <div
               className="text-[26px] font-extrabold"
@@ -842,7 +862,7 @@ function ResultsScreen({
               {protocolName}
             </div>
             <div className="text-sm mt-0.5" style={{ color: "#669ef3" }}>
-              Protocolo Congolês + Treino Kegel · Calibrado para {ageLabel}
+              Protocolo Congoleño + Entrenamiento Kegel · Calibrado para {ageLabel}
             </div>
           </div>
 
@@ -856,7 +876,7 @@ function ResultsScreen({
                 borderRadius: "8px",
               }}
             >
-              <div className="text-sm mb-1" style={{ color: "#5e7d9f" }}>Seu ganho projetado em 45 dias</div>
+              <div className="text-sm mb-1" style={{ color: "#5e7d9f" }}>Tu ganancia proyectada en 45 días</div>
               <div
                 className="text-7xl font-extrabold leading-none"
                 style={{ color: "#003466", fontFamily: "'Montserrat', sans-serif" }}
@@ -864,14 +884,14 @@ function ResultsScreen({
                 +{gain}<span className="text-4xl">cm</span>
               </div>
               <div className="text-sm mt-1.5" style={{ color: "#5e7d9f" }}>
-                Baseado na sua idade, perfil de saúde e linha de base hormonal
+                Basado en tu edad, perfil de salud y línea base hormonal
               </div>
             </div>
 
             {/* Size visualiser */}
             <div>
               <div className="flex justify-between text-xs font-bold uppercase tracking-wide mb-2" style={{ color: "#5e7d9f" }}>
-                <span>Agora</span><span>Dia 45</span>
+                <span>Ahora</span><span>Día 45</span>
               </div>
               <div className="relative h-6 rounded-full overflow-hidden" style={{ backgroundColor: "#f3f4f6" }}>
                 <div
@@ -891,9 +911,9 @@ function ResultsScreen({
             {/* Timeline milestones */}
             <div className="grid grid-cols-3 gap-2.5">
               {[
-                { t: "Semana 2", v: `+${+(gain * 0.28).toFixed(1)}cm`, n: "Primeiras mudanças" },
-                { t: "Dia 21", v: `+${+(gain * 0.58).toFixed(1)}cm`, n: "Crescimento visível" },
-                { t: "Dia 45", v: `+${gain}cm`, n: "Resultado completo" },
+                { t: "Semana 2", v: `+${+(gain * 0.28).toFixed(1)}cm`, n: "Primeros cambios" },
+                { t: "Día 21", v: `+${+(gain * 0.58).toFixed(1)}cm`, n: "Crecimiento visible" },
+                { t: "Día 45", v: `+${gain}cm`, n: "Resultado completo" },
               ].map((m) => (
                 <div
                   key={m.t}
@@ -915,13 +935,13 @@ function ResultsScreen({
             {/* Benefits */}
             <div className="space-y-2.5 pt-1">
               {[
-                "Aumente comprimento e espessura naturalmente — sem aparelhos",
-                "Ereções mais fortes e duradouras",
-                "Técnicas avançadas de Kegel para resistência e controle",
-                "Primeiros resultados visíveis em 14 dias",
-                "Mais confiança e desempenho na cama",
-                "Sem pílulas, sem bombas, sem efeitos colaterais",
-                "Discreto — tudo feito em casa",
+                "Aumenta longitud y grosor de forma natural — sin aparatos",
+                "Erecciones más fuertes y duraderas",
+                "Técnicas avanzadas de Kegel para resistencia y control",
+                "Primeros resultados visibles en 14 días",
+                "Más confianza y rendimiento en la cama",
+                "Sin pastillas, sin bombas, sin efectos secundarios",
+                "Discreto — todo se hace en casa",
               ].map((b) => (
                 <div key={b} className="flex items-start gap-3">
                   <div
@@ -943,7 +963,7 @@ function ResultsScreen({
             className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-center mb-3"
             style={{ color: "#5e7d9f", fontFamily: "'Montserrat', sans-serif" }}
           >
-            Resultados reais de homens no Brasil
+            Resultados reales de hombres en España
           </div>
           <div className="space-y-3">
             {TESTIMONIALS.map((t, idx) => (
@@ -1011,10 +1031,10 @@ function ResultsScreen({
               className="text-white font-extrabold text-base"
               style={{ fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.5px" }}
             >
-              Garantia de 30 Dias com Devolução do Dinheiro
+              Garantía de 30 Días con Devolución de Dinero
             </div>
             <div className="text-sm mt-0.5" style={{ color: "#669ef3" }}>
-              Sem resultados em 30 dias? Reembolso total. Sem perguntas.
+              ¿Sin resultados en 30 días? Reembolso total. Sin preguntas.
             </div>
           </div>
         </div>
@@ -1022,6 +1042,7 @@ function ResultsScreen({
         {/* CTA block */}
         <div className="space-y-3 pt-1">
           <button
+            type="button"
             onClick={onCTA}
             className="cta-btn w-full text-white font-extrabold py-5 text-[15px] uppercase tracking-wide shadow-xl"
             style={{
@@ -1031,14 +1052,14 @@ function ResultsScreen({
               letterSpacing: "0.5px",
             }}
           >
-            Quero Meu Plano Agora →
+            Quiero Mi Plan Ahora →
           </button>
 
           <div className="flex items-center justify-center gap-3 text-xs flex-wrap" style={{ color: "#5e7d9f" }}>
-            <span className="flex items-center gap-1"><LockIcon className="w-3 h-3" /> Pagamento seguro</span>
-            <span>·</span><span>Cobrança discreta</span>
-            <span>·</span><span>Entrega para todo o Brasil</span>
-            <span>·</span><span>Preços em BRL</span>
+            <span className="flex items-center gap-1"><LockIcon className="w-3 h-3" /> Pago seguro</span>
+            <span>·</span><span>Cobro discreto</span>
+            <span>·</span><span>Envío a toda España</span>
+            <span>·</span><span>Precios en EUR</span>
           </div>
 
           <div
@@ -1046,7 +1067,7 @@ function ResultsScreen({
             style={{ backgroundColor: "#fffbeb", border: "1px solid #fcd34d", borderRadius: "8px" }}
           >
             <p className="text-sm font-bold" style={{ color: "#b45309" }}>
-              ⚡ {spots} vaga{spots !== 1 ? "s" : ""} restante{spots !== 1 ? "s" : ""} neste preço — expira em {fmt(secs)}
+              ⚡ {spots} plaza{spots !== 1 ? "s" : ""} restante{spots !== 1 ? "s" : ""} a este precio — caduca en {fmt(secs)}
             </p>
           </div>
         </div>
@@ -1057,7 +1078,7 @@ function ResultsScreen({
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
-export default function IrelandQuiz() {
+export default function SpainQuiz() {
   useFbPixel()
   usePrefetchSlides()
 
@@ -1109,7 +1130,12 @@ export default function IrelandQuiz() {
       }
       return { ...prev, answers, stepIndex: next }
     })
-    window.scrollTo({ top: 0, behavior: "smooth" })
+    // iOS Safari: smooth scroll can briefly freeze the next paint.
+    if (typeof window !== "undefined") {
+      requestAnimationFrame(() => {
+        try { window.scrollTo({ top: 0, behavior: "auto" }) } catch { window.scrollTo(0, 0) }
+      })
+    }
   }, [startLoad])
 
   const back = useCallback(() => {
@@ -1125,7 +1151,11 @@ export default function IrelandQuiz() {
       }
       return { ...prev, stepIndex: next }
     })
-    window.scrollTo({ top: 0, behavior: "smooth" })
+    if (typeof window !== "undefined") {
+      requestAnimationFrame(() => {
+        try { window.scrollTo({ top: 0, behavior: "auto" }) } catch { window.scrollTo(0, 0) }
+      })
+    }
   }, [startLoad])
 
   const updateFt = useCallback((v: number) => {
@@ -1191,7 +1221,7 @@ export default function IrelandQuiz() {
                   className="text-[10px] font-extrabold uppercase tracking-[0.22em] mb-1"
                   style={{ color: "#d1d5db", fontFamily: "'Montserrat', sans-serif" }}
                 >
-                  Você sabia?
+                  ¿Sabías que…?
                 </div>
                 <h2
                   className="text-xl sm:text-[22px] font-extrabold leading-tight"
@@ -1223,6 +1253,7 @@ export default function IrelandQuiz() {
                   </p>
                 </div>
                 <button
+                  type="button"
                   onClick={nextStep}
                   className="cta-btn w-full py-4 font-extrabold text-[15px] uppercase tracking-wide flex items-center justify-center gap-2"
                   style={{
@@ -1232,10 +1263,11 @@ export default function IrelandQuiz() {
                     color: "#fff",
                   }}
                 >
-                  Entendi! <span>→</span>
+                  ¡Entendido! <span>→</span>
                 </button>
                 {s.stepIndex > 0 && (
                   <button
+                    type="button"
                     onClick={back}
                     className="text-sm flex items-center gap-1 transition-opacity hover:opacity-70"
                     style={{ color: "#5e7d9f" }}
@@ -1271,7 +1303,7 @@ export default function IrelandQuiz() {
                 className="text-[10px] font-extrabold uppercase tracking-[0.22em] mb-3"
                 style={{ color: "#d1d5db", fontFamily: "'Montserrat', sans-serif" }}
               >
-                {isHeight ? "Seus Dados" : `Pergunta ${qNum} de ${TOTAL_Q}`}
+                {isHeight ? "Tus Datos" : `Pregunta ${qNum} de ${TOTAL_Q}`}
               </div>
 
               <h2
@@ -1323,11 +1355,12 @@ export default function IrelandQuiz() {
 
               {s.stepIndex > 0 && (
                 <button
+                  type="button"
                   onClick={back}
                   className="mt-5 text-sm flex items-center gap-1 transition-opacity hover:opacity-70"
                   style={{ color: "#5e7d9f" }}
                 >
-                  ← Pergunta anterior
+                  ← Pregunta anterior
                 </button>
               )}
             </div>
@@ -1340,7 +1373,7 @@ export default function IrelandQuiz() {
             >
               <span style={{ color: "#669ef3" }}><LockIcon className="w-4 h-4" /></span>
               <p className="text-xs font-semibold" style={{ color: "#669ef3" }}>
-                Suas respostas são 100% privadas — nunca compartilhadas ou vendidas
+                Tus respuestas son 100% privadas — nunca se comparten ni se venden
               </p>
             </div>
           </div>
