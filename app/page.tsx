@@ -175,6 +175,32 @@ const usePrefetchSlides = () => {
   }, [])
 }
 
+// ─── Prefetch de los videos ──────────────────────────────────────────────────
+const VIDEO_URLS = [
+  `${VID_CDN}/wp-content/uploads/2025/05/Assoalho-Pelvico-2.mp4`,
+  `${VID_CDN}/wp-content/uploads/2025/05/Assoalho-Pelvico-1.mp4`,
+]
+
+const usePrefetchVideos = () => {
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    const run = () => {
+      VIDEO_URLS.forEach((url) => {
+        const link = document.createElement("link")
+        link.rel = "preload"
+        link.as = "video"
+        link.href = url
+        document.head.appendChild(link)
+      })
+    }
+    const idle = (window as any).requestIdleCallback as
+      | ((cb: () => void, opts?: { timeout: number }) => number)
+      | undefined
+    if (idle) idle(run, { timeout: 2000 })
+    else setTimeout(run, 500)
+  }, [])
+}
+
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 type Screen = "quiz" | "loading" | "results"
 
@@ -296,9 +322,9 @@ const STEPS: Step[] = [
   },
   {
     kind: "h",
-    id: "height",
-    q: "¿Cuál es tu altura?",
-    hint: "Se usa para afinar tu línea base hormonal",
+    id: "pencil",
+    q: "¿Cuál es el tamaño de tu lápiz?",
+    hint: "Se usa para calibrar tu protocolo personalizado",
   },
 ]
 
@@ -488,25 +514,25 @@ function HeightStep({
   onFt: (v: number) => void; onIn: (v: number) => void
   onContinue: () => void
 }) {
-  const valid = unit === "cm" ? height >= 140 && height <= 225 : feetVal * 12 + inchVal >= 54
+  const valid = unit === "cm" ? height >= 8 && height <= 22 : inchVal >= 3 && inchVal <= 9
 
   return (
     <div className="space-y-5">
       <div className="flex justify-center">
         <div className="inline-flex p-1 gap-1" style={{ backgroundColor: "#f3f4f6", borderRadius: "6px" }}>
-          {(["cm", "ft"] as const).map((u) => (
+          {(["cm", "in"] as const).map((u) => (
             <button
               key={u}
               type="button"
-              onClick={() => onUnit(u)}
+              onClick={() => onUnit(u === "in" ? "ft" : "cm")}
               className="px-5 py-1.5 text-sm font-bold transition-all"
               style={{
                 borderRadius: "4px",
-                backgroundColor: u === unit ? "#003466" : "transparent",
-                color: u === unit ? "#fff" : "#5e7d9f",
+                backgroundColor: (u === "cm" && unit === "cm") || (u === "in" && unit === "ft") ? "#003466" : "transparent",
+                color: (u === "cm" && unit === "cm") || (u === "in" && unit === "ft") ? "#fff" : "#5e7d9f",
               }}
             >
-              {u === "cm" ? "cm" : "pies / plg"}
+              {u === "cm" ? "cm" : "pulgadas"}
             </button>
           ))}
         </div>
@@ -526,14 +552,14 @@ function HeightStep({
             </div>
             <div className="text-sm mb-5" style={{ color: "#5e7d9f" }}>centímetros</div>
             <input
-              type="range" min={140} max={225} value={height}
+              type="range" min={8} max={22} value={height}
               onChange={(e) => onHeight(+e.target.value)}
               className="w-full cursor-pointer"
               style={{ accentColor: "#003466" }}
-              aria-label="Altura en centímetros"
+              aria-label="Tamaño en centímetros"
             />
             <div className="flex justify-between text-xs mt-1.5" style={{ color: "#9ca3af" }}>
-              <span>140 cm</span><span>225 cm</span>
+              <span>8 cm</span><span>22 cm</span>
             </div>
           </>
         ) : (
@@ -542,30 +568,18 @@ function HeightStep({
               className="text-6xl font-extrabold tabular-nums"
               style={{ color: "#003466", fontFamily: "'Montserrat', sans-serif" }}
             >
-              {feetVal}&apos;{inchVal}&quot;
+              {inchVal}&quot;
             </div>
-            <div className="text-sm mb-5" style={{ color: "#5e7d9f" }}>{height} cm</div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <div className="text-xs mb-1 font-medium" style={{ color: "#5e7d9f" }}>Pies (4 – 7)</div>
-                <input
-                  type="range" min={4} max={7} value={feetVal}
-                  onChange={(e) => onFt(+e.target.value)}
-                  className="w-full cursor-pointer"
-                  style={{ accentColor: "#003466" }}
-                  aria-label="Altura en pies"
-                />
-              </div>
-              <div>
-                <div className="text-xs mb-1 font-medium" style={{ color: "#5e7d9f" }}>Pulgadas (0 – 11)</div>
-                <input
-                  type="range" min={0} max={11} value={inchVal}
-                  onChange={(e) => onIn(+e.target.value)}
-                  className="w-full cursor-pointer"
-                  style={{ accentColor: "#003466" }}
-                  aria-label="Altura en pulgadas"
-                />
-              </div>
+            <div className="text-sm mb-5" style={{ color: "#5e7d9f" }}>{Math.round(inchVal * 2.54)} cm</div>
+            <input
+              type="range" min={3} max={9} value={inchVal}
+              onChange={(e) => onIn(+e.target.value)}
+              className="w-full cursor-pointer"
+              style={{ accentColor: "#003466" }}
+              aria-label="Tamaño en pulgadas"
+            />
+            <div className="flex justify-between text-xs mt-1.5" style={{ color: "#9ca3af" }}>
+              <span>3 in</span><span>9 in</span>
             </div>
           </>
         )}
@@ -737,17 +751,17 @@ function LoadingScreen({ progress, onDone }: { progress: number; onDone: () => v
 // ─── Pantalla de Resultados ──────────────────────────────────────────────────
 const TESTIMONIALS = [
   {
-    name: "Carlos M.", location: "Sevilla", age: 34, gain: "+3,8 cm",
+    name: "Carlos M.", location: "Sevilla", age: 34, gain: "+3,7 cm",
     avatar: `${AVT_CDN}/perfil-homem-1-l7FyTNhxqK5SaLUTZjCLqtE7sgtRWV.webp`,
     quote: "Nunca pensé que vería resultados reales. Mi pareja notó la diferencia enseguida.",
   },
   {
-    name: "Diego R.", location: "Madrid", age: 38, gain: "+3,9 cm",
+    name: "Diego R.", location: "Madrid", age: 38, gain: "+3,7 cm",
     avatar: `${AVT_CDN}/perfil-homem-2-0sIhUJYdJixqD7XZ0pxNiA3sPTYvBB.webp`,
     quote: "Sencillo de seguir y sin efectos secundarios. Muy contento con los resultados.",
   },
   {
-    name: "Sergio F.", location: "Valencia", age: 42, gain: "+4,0 cm",
+    name: "Sergio F.", location: "Valencia", age: 42, gain: "+4,2 cm",
     avatar: `${AVT_CDN}/perfil-homem-3-9kAExqkHb9cPMFJQTNDHIQnmSx62I2.webp`,
     quote: "A mi edad no esperaba cambios así. El protocolo funciona de verdad.",
   },
@@ -1054,16 +1068,17 @@ function ResultsScreen({
 export default function SpainQuiz() {
   useFbPixel()
   usePrefetchSlides()
+  usePrefetchVideos()
 
   const [s, setS] = useState<State>({
     screen: "quiz",
     stepIndex: 0,
     answers: {},
     loadProgress: 0,
-    height: 175,
+    height: 13,
     heightUnit: "cm",
     feetVal: 5,
-    inchVal: 9,
+    inchVal: 5,
   })
 
   const loadInterval = useRef<ReturnType<typeof setInterval> | null>(null)
